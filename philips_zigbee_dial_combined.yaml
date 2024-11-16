@@ -760,14 +760,16 @@ variables:
     button_2: !input button_2_action_dim
     button_3: !input button_3_action_dim
     button_4: !input button_4_action_dim
-  button_1_small_rotation_max: !input button_1_small_rotation_max
-  button_2_small_rotation_max: !input button_2_small_rotation_max
-  button_3_small_rotation_max: !input button_3_small_rotation_max
-  button_4_small_rotation_max: !input button_4_small_rotation_max
-  button_1_medium_rotation_max: !input button_1_medium_rotation_max
-  button_2_medium_rotation_max: !input button_2_medium_rotation_max
-  button_3_medium_rotation_max: !input button_3_medium_rotation_max
-  button_4_medium_rotation_max: !input button_4_medium_rotation_max
+  small_rotation_max:
+    button_1: !input button_1_small_rotation_max
+    button_2: !input button_2_small_rotation_max
+    button_3: !input button_3_small_rotation_max
+    button_4: !input button_4_small_rotation_max
+  medium_rotation_max:
+    button_1: !input button_1_medium_rotation_max
+    button_2: !input button_2_medium_rotation_max
+    button_3: !input button_3_medium_rotation_max
+    button_4: !input button_4_medium_rotation_max
   current_light_helper: !input current_light_helper
   dim_scale: !input dim_scale
 #  area_1: !input area_1
@@ -893,10 +895,12 @@ action:
     - '{{ command == ''step_with_on_off'' }}'
     sequence:
     - variables:
-        step_size_name: "{% if step_size <= button_3_small_rotation_max %}\n  {{ \"Small\"
-          }}\n{% elif step_size <= button_3_medium_rotation_max %}\n  {{ \"Medium\" }}\n{%
-          else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
         last_button: '{{ states(current_light_helper) }}'
+        small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
+        medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
+        step_size_name: "{% if step_size <= small_rotation_max_button %}\n  {{ \"Small\"
+          }}\n{% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\" }}\n{%
+          else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
     - choose:
       - conditions:
         - '{{ step_mode == ''StepMode.Up'' }}'
