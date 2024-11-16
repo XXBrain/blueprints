@@ -1,5 +1,5 @@
 blueprint:
-  name: Philips Tap Dial Switch 4 Lights or Custom (ZHA) 
+  name: Philips Tap Dial Switch 4 Lights or Custom (ZHA)
   description: 'Control lights with a Philips Hue Tap Switch. Use the four buttons
     to control up to four light(s) with an on, off or toggle or custom actions.
     Supports short releaese, long release and double press, each beheaviour can 
@@ -8,7 +8,7 @@ blueprint:
     rotation action for that button.
     based on 
     apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
-    gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af
+    gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af'
   domain: automation
   input:
     remote:
@@ -47,7 +47,7 @@ blueprint:
       icon: mdi:lightbulb
       collapsed: true
       input:
-        button_1:
+        button_1_enities:
           name: Lights
           description: The light(s) to control with first button
           default: {}
@@ -57,10 +57,11 @@ blueprint:
               - {}
         button_1_action_short:
           name: Short Release Action
-          description: Actions triggered by short press and release the button.
-            You can also use a custom action that should be defined below or 
-            type in any other service that is called with the lights entity ids 
+          description: Action triggered by short pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
             as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
           default: homeassistant.turn_on
           selector:
             select:
@@ -71,18 +72,17 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_1_action_long:
           name: Long Release Action
-          description: Actions triggered by long press and release the button.
-            You can also use a custom action that should be defined below or 
-            type in any other service that is called with the lights entity ids 
+          description: Action triggered by long pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
             as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option.  
           default: homeassistant.turn_off
           selector:
             select:
@@ -93,8 +93,6 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
@@ -114,6 +112,61 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+#        area_1    :
+#          name: Name of area
+#          description: Name of the area where you want to toggle scenes
+#          default: ''
+#          selector:
+#            area: {}
+#        included_scenes_1:
+#          name: Included Scenes
+#          description: Additional scenes to be included
+#          default: []
+#          selector:
+#            entity:
+#              domain:
+#              - scene
+#              multiple: true
+#        excluded_scenes_1:
+#          name: Excluded Scenes
+#          description: Scenes to be excluded
+#          default: []
+#          selector:
+#            target:
+#              entity:
+#                domain:
+#                - scene
+#        transition_1:
+#          name: Transition time
+#          description: Transition time when switching between scenes
+#          default: 1
+#          selector:
+#            number:
+#              min: 0.0
+#              max: 10.0
+#              step: 0.1
+#              unit_of_measurement: s
+#              mode: slider
+#        use_static_order_1:
+#          name: Static order
+#          description: This automation is based on timestamps of the activation of the
+#            scenes. If this option is enabled a static order will be used instead of the
+#            dynamic one.
+#          default: false
+#          selector:
+#            boolean: {}
+#        reset_after_1:
+#          name: Reset After
+#          description: If the static order is activated, a timeout can be set after which
+#            the order is reset to the first scene. If 0 is set the timeout is disabled.
+#          default: 0
+#          selector:
+#            number:
+#              min: 0.0
+#              max: 120.0
+#              step: 1.0
+#              unit_of_measurement: s
+#              mode: slider
     button_1_custom:
       name: Button 1 - Custom Actions
       icon: mdi:numeric-1-circle-outline
@@ -206,7 +259,7 @@ blueprint:
       icon: mdi:lightbulb
       collapsed: true
       input:
-        button_2:
+        button_2_enities:
           name: Lights
           description: The light(s) to control with first button
           default: {}
@@ -216,10 +269,11 @@ blueprint:
               - {}
         button_2_action_short:
           name: Short Release Action
-          description: Actions triggered by short press and release the button.
-            You can also use a custom action that should be defined below or 
+          description: Action triggered by short pressing and releasing the button or 
             type in any other service that is called with the lights entity ids
-            as targer.
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
           default: homeassistant.turn_on
           selector:
             select:
@@ -230,19 +284,17 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_2_action_long:
           name: Short Release Action
-          description: Actions triggered by long press and release the button.
-            You can also use a custom action that should be defined below or 
+          description: Action triggered by long pressing and releasing the button or 
             type in any other service that is called with the lights entity ids
-            as targer.
             as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
           default: homeassistant.turn_off
           selector:
             select:
@@ -253,8 +305,6 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
@@ -366,7 +416,7 @@ blueprint:
       icon: mdi:lightbulb
       collapsed: true
       input:
-        button_3:
+        button_3_enities:
           name: Lights
           description: The light(s) to control with first button
           default: {}
@@ -376,10 +426,12 @@ blueprint:
               - {}
         button_3_action_short:
           name: Short Release Action
-          description: Actions triggered by short press and release the button.
-            You can also use a custom action that should be defined below or 
-            type in any other service that is called with the lights entity ids.
+          description: Action triggered by short pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
             as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option.  custom action in the sction below that willoverwie 
+            this option. 
           default: homeassistant.turn_on
           selector:
             select:
@@ -390,18 +442,17 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_3_action_long:
           name: Long Release Action
-          description: Actions triggered by long press and release the button.
-            You can also use a custom action that should be defined below or 
+          description: Action triggered by long pressing and releasing the button or 
             type in any other service that is called with the lights entity ids
-            as targer.
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
           default: homeassistant.turn_off
           selector:
             select:
@@ -412,8 +463,6 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
@@ -525,7 +574,7 @@ blueprint:
       icon: mdi:lightbulb
       collapsed: true
       input:
-        button_4:
+        button_4_enities:
           name: Lights
           description: The light(s) to control with first button
           default: {}
@@ -535,10 +584,11 @@ blueprint:
               - {}
         button_4_action_short:
           name: Short Release Action
-          description: Actions triggered by short press and release the button.
-            You can also use a custom action that should be defined below or 
+          description: Action triggered by short pressing and releasing the button or 
             type in any other service that is called with the lights entity ids
-            as target. 
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
           default: homeassistant.turn_on
           selector:
             select:
@@ -549,18 +599,17 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_4_action_long:
           name: Long Release Action
-          description: Actions triggered by long press and release the button.
-            You can also use a custom action that should be defined below or 
+          description: Action triggered by long pressing and releasing the button or 
             type in any other service that is called with the lights entity ids
             as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
           default: homeassistant.turn_off
           selector:
             select:
@@ -571,8 +620,6 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
-              - label: Custom Action (define below)
-                value: custom
               multiple: false
               mode: dropdown
               custom_value: true
@@ -683,22 +730,36 @@ blueprint:
 mode: restart
 max_exceeded: silent
 variables:
-  button_1: !input button_1
-  button_2: !input button_2
-  button_3: !input button_3
-  button_4: !input button_4
-  button_1_action_short: !input button_1_action_short
-  button_2_action_short: !input button_2_action_short
-  button_3_action_short: !input button_3_action_short
-  button_4_action_short: !input button_4_action_short
-  button_1_action_long: !input button_1_action_long
-  button_2_action_long: !input button_2_action_long
-  button_3_action_long: !input button_3_action_long
-  button_4_action_long: !input button_4_action_long
-  button_1_action_dim: !input button_1_action_dim
-  button_2_action_dim: !input button_2_action_dim
-  button_3_action_dim: !input button_3_action_dim
-  button_4_action_dim: !input button_4_action_dim
+  lights:
+    button_1: !input button_1_enities
+    button_2: !input button_2_enities
+    button_3: !input button_3_enities
+    button_4: !input button_4_enities
+  actions_short:
+    button_1: !input button_1_action_short
+    button_2: !input button_2_action_short
+    button_3: !input button_3_action_short
+    button_4: !input button_4_action_short
+  sequence_short:
+    button_1: !input button_1_short_release
+    button_2: !input button_2_short_release
+    button_3: !input button_3_short_release
+    button_4: !input button_4_short_release
+  actions_long:
+    button_1: !input button_1_action_long
+    button_2: !input button_2_action_long
+    button_3: !input button_3_action_long
+    button_4: !input button_4_action_long
+  sequence_long:
+    button_1: !input button_1_long_release
+    button_2: !input button_2_long_release
+    button_3: !input button_3_long_release
+    button_4: !input button_4_long_release
+  actions_dim:  
+    button_1: !input button_1_action_dim
+    button_2: !input button_2_action_dim
+    button_3: !input button_3_action_dim
+    button_4: !input button_4_action_dim
   button_1_small_rotation_max: !input button_1_small_rotation_max
   button_2_small_rotation_max: !input button_2_small_rotation_max
   button_3_small_rotation_max: !input button_3_small_rotation_max
@@ -709,12 +770,13 @@ variables:
   button_4_medium_rotation_max: !input button_4_medium_rotation_max
   current_light_helper: !input current_light_helper
   dim_scale: !input dim_scale
-  lights:
-    button_1: !input button_1
-    button_2: !input button_2
-    button_3: !input button_3
-    button_4: !input button_4
-  
+#  area_1: !input area_1
+#  included_scenes_1: !input included_scenes_1
+#  excluded_scenes_1: !input excluded_scenes_1
+#  reset_after_1: !input reset_after_1
+#  use_static_order_1: !input use_static_order_1
+#  last_triggered_1: '{{ as_timestamp(iif(state_attr(this.entity_id,''last_triggered_1'')
+#    == none, now(), state_attr(this.entity_id,''last_triggered_1''))) }}'
 trigger:
 - platform: event
   event_type: zha_event
@@ -738,12 +800,8 @@ action:
       is defined) %}{{trigger.event.data.params.step_mode}}{% endif %}'
     scene: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.scene_id
       is defined) %}{{trigger.event.data.params.scene_id}}{% endif %}'
-#    - service: logbook.log
-#      data:
-#        name: button
-#        message: >
-#          {{ button_3 != {} }} {{ button_4 != {} }}
-#          {{ button_3.entity_id }} {{ button_4.entity_id }}
+    use_custom_short: '{{ sequence_short[button] != [] }}'  
+    use_custom_long: '{{ sequence_long[button] != [] }}'
 - choose:
   - conditions: 
     - '{{ press_type == ''short_release'' }}'
@@ -753,224 +811,192 @@ action:
         entity_id: !input current_light_helper
       data:
         value: '{{ button }}'
+    - choose:
+      - conditions: '{{ not use_custom_short }}'
+        sequence:
+          - service: '{{ actions_short[button] }}'
+            target: '{{ lights[button] }}'
+      - conditions: '{{ button == "button_1" and use_custom_short }}'
+        sequence: !input button_1_short_release
+      - conditions: '{{ button == "button_2" and use_custom_short }}'
+        sequence: !input button_2_short_release
+      - conditions: '{{ button == "button_3" and use_custom_short }}'
+        sequence: !input button_3_short_release
+      - conditions: '{{ button == "button_4" and use_custom_short }}'
+        sequence: !input button_4_short_release
+  - conditions: 
+    - '{{ press_type == ''long_release'' }}'
+    sequence:
+    - service: logbook.log
+      data:
+        name: button
+        message: >
+          {{ command }}
+          {{ actions_long[button] }}
+          {{ sequence_short[button] }}
+          {{ button == 'button_3' and (lights[button] == {}  or actions_long[button] == "custom")  }}
+    - choose:
+      - conditions: '{{ not use_custom_long }}'
+        sequence:
+          - service: '{{ actions_long[button] }}'
+            target: '{{ lights[button] }}'
+      - conditions: '{{  button == "button_1" and use_custom_long }}'
+        sequence: !input button_1_long_release
+      - conditions: '{{  button == "button_2" and use_custom_long }}'
+        sequence: !input button_2_long_release
+      - conditions: '{{  button == "button_3" and use_custom_long }}'
+        sequence: !input button_3_long_release
+      - conditions: '{{  button == "button_4" and use_custom_long }}'
+        sequence: !input button_4_long_release 
+  - conditions: 
+    - '{{ press_type == ''double_press'' }}'
+    sequence:
+    - service: logbook.log
+      data:
+        name: button
+        message: >
+          {{ command }}
+    - choose:
+      - conditions: '{{ command == ''button_1_double_press'' }}'
+        sequence: !input button_1_double_press
+#        sequence:
+#        - service: scene.turn_on
+#          data_template:
+#            transition: !input transition_1
+#            entity_id: "{% set area_scenes_1 = states.scene_1 | selectattr('entity_id', 'in',
+#              area_entities_1(area_1)) | map(attribute='entity_id') | list %} {% set all_scenes_1
+#              = (area_scenes_1 | reject('in', excluded_scenes_1) | list) + included_scenes_1 %}\n
+#              {%
+#              if use_static_order_1 == true %}\n\n  {% set is_reset_1 = reset_after_1 > 0 and (as_timestamp(now())
+#              - last_triggered_1 >= reset_after_1) %}\n\n  {% if is_reset_1 == true %}\n    {{ all_scenes_1[0]
+#              }}\n  {% else %}\n    \n    {% set unknown_scenes_1 = expand(all_scenes_1) | selectattr('state',
+#              'eq', 'unknown') | map(attribute='entity_id') | list %}\n    {% set scenes_sorted_by_activation_1
+#              = expand(all_scenes_1) | sort(attribute='state', reverse = true) | map(attribute='entity_id')
+#              | reject('in', unknown_scenes_1) | list %}\n    {% set last_activated_scene_1 =
+#              scenes_sorted_by_activation_1[0] %}\n    {% set index_of_last_activated_scene_1
+#              = all_scenes_1.index(last_activated_scene_1) %}\n    {% set new_index_1 = index_of_last_activated_scene_1
+#              + 1 %}\n\n    {% if new_index_1 == all_scenes_1 | count %}\n      {{ all_scenes_1[0]
+#              }}\n    {% else %}\n      {{ all_scenes_1[new_index] }}\n    {% endif %}\n  {%
+#              endif %}\n{% else %}     \n  {% set unknown_scenes_1 = expand(all_scenes_1) | selectattr('state',
+#              'eq', 'unknown') | map(attribute='entity_id') | list %}\n  {% if unknown_scenes_1
+#              | count > 0 %}\n    {{ unknown_scenes_1[0] }}     \n  {% else %}\n    {% set known_scenes_1
+#              = expand(all_scenes_1) | sort(attribute='state', reverse = false) | map(attribute='entity_id')
+#              | list %}\n    {{ known_scenes_1[0] }}\n  {% endif %}\n{% endif %}\n"
+      - conditions: '{{ command == ''button_2_double_press'' }}'
+        sequence: !input button_2_double_press
+      - conditions: '{{ command == ''button_3_double_press'' }}'
+        sequence: !input button_3_double_press
+      - conditions: '{{ command == ''button_4_double_press'' }}'
+        sequence: !input button_4_double_press
 - choose:
-  - conditions: '{{ command == ''button_1_short_release'' and (button_1 == {} or button_1_action_short == ''custom'') }}'
-    sequence: !input button_1_short_release
-  - conditions: '{{ command == ''button_1_short_release'' and button_1_action_short != ''custom'' }}'
-    sequence:
-      - service: '{{ button_1_action_short }}'
-        target: !input button_1
-  - conditions: '{{ command == ''button_2_short_release'' and (button_2 == {} or button_2_action_short == ''custom'') }}'
-    sequence: !input button_2_short_release
-  - conditions: '{{ command == ''button_2_short_release'' and button_2_action_short != ''custom'' }}'
-    sequence:
-    - service: '{{ button_1_action_short }}'
-      target: !input button_2
-  - conditions: '{{ command == ''button_3_short_release'' and (button_3 == {} or button_3_action_short == ''custom'') }}'
-    sequence: !input button_3_short_release
-  - conditions: '{{ command == ''button_3_short_release'' and button_3_action_short != ''custom'' }}'
-    sequence:
-    - service: '{{ button_1_action_short }}'
-      target: !input button_3
-  - conditions: '{{ command == ''button_4_short_release'' and (button_4 == {} or button_4_action_short == ''custom'') }}'
-    sequence: !input button_4_short_release
-  - conditions: '{{ command == ''button_4_short_release'' and button_4_action_short != ''custom'' }}'
-    sequence:
-    - service: '{{ button_1_action_short }}'
-      target: !input button_4
-  - conditions: '{{ command == ''button_1_long_release'' and (button_1 == {} or button_1_action_long == ''custom'') }}'
-    sequence: !input button_1_long_release
-  - conditions: '{{ command == ''button_1_long_release'' and button_1_action_long != ''custom'' }}'
-    sequence:
-    - service: '{{ button_1_action_long }}'
-      target: !input button_1
-  - conditions: '{{ command == ''button_2_long_release'' and (button_2 == {} or button_2_action_long == ''custom'') }}'
-    sequence: !input button_2_long_release
-  - conditions: '{{ command == ''button_2_long_release'' and button_2_action_long != ''custom'' }}'
-    sequence:
-    - service: '{{ button_2_action_long }}'
-      target: !input button_2
-  - conditions: '{{ command == ''button_3_long_release'' and (button_3 == {} or button_3_action_long == ''custom'') }}'
-    sequence: !input button_3_long_release
-  - conditions: '{{ command == ''button_3_long_release'' and button_3_action_long != ''custom'' }}'
-    sequence:
-    - service: '{{ button_3_action_long }}'
-      target: !input button_3
-  - conditions: '{{ command == ''button_4_long_release'' and (button_4 == {} or button_4_action_long == ''custom'') }}'
-    sequence: !input button_4_long_release
-  - conditions: '{{ command == ''button_4_long_release'' and button_4_action_long != ''custom'' }}'
-    sequence:
-    - service: '{{ button_4_action_long }}'
-      target: !input button_4
-  - conditions: '{{ command == ''button_1_double_press'' }}'
-    sequence: !input button_1_double_press
-  - conditions: '{{ command == ''button_2_double_press'' }}'
-    sequence: !input button_2_double_press
-  - conditions: '{{ command == ''button_3_double_press'' }}'
-    sequence: !input button_3_double_press
-  - conditions: '{{ command == ''button_4_double_press'' }}'
-    sequence: !input button_4_double_press
   - conditions:
     - '{{ command == ''step_with_on_off'' }}'
-    - '{{ step_mode == ''StepMode.Up'' }}'
     sequence:
     - variables:
         step_size_name: "{% if step_size <= button_3_small_rotation_max %}\n  {{ \"Small\"
           }}\n{% elif step_size <= button_3_medium_rotation_max %}\n  {{ \"Medium\" }}\n{%
           else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
+        last_button: '{{ states(current_light_helper) }}'
     - choose:
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_1'' }}'
-          - or:
-            - '{{ button_1 == {} }}'
-            - '{{ button_1_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input clockwise_rotation_small_1
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input clockwise_rotation_medium_1
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input clockwise_rotation_large_1
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_2'' }}'
-          - or:
-            - '{{ button_2 == {} }}'
-            - '{{ button_2_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input clockwise_rotation_small_2
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input clockwise_rotation_medium_2
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input clockwise_rotation_large_2
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_3'' }}'
-          - or:
-            - '{{ button_3 == {} }}'
-            - '{{ button_3_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input clockwise_rotation_small_3
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input clockwise_rotation_medium_3
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input clockwise_rotation_large_3
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_4'' }}'
-          - or:
-            - '{{ button_4 == {} }}'
-            - '{{ button_4_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input clockwise_rotation_small_4
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input clockwise_rotation_medium_4
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input clockwise_rotation_large_4
-      - conditions: '{{ current_light_helper != none }}'
-        sequence:   
-        - service: light.turn_on
-          target: '{{ lights[states(current_light_helper)] }}'
-          data:
-            brightness_step_pct: '{{ step_size * dim_scale }}'
-            transition: 1
-      default:
-      - service: light.turn_on
-        target: !input button_1
-        data:
-          brightness_step_pct: '{{ step_size * dim_scale }}'
-          transition: 1
-  - conditions:
-    - '{{ command == ''step_with_on_off'' }}'
-    - '{{ step_mode == ''StepMode.Down'' }}'
-    sequence:
-    - variables:
-        step_size_name: "{% if step_size <= button_3_small_rotation_max %}\n  {{ \"Small\"
-          }}\n{% elif step_size <= button_3_medium_rotation_max %}\n  {{ \"Medium\" }}\n{%
-          else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
-    - choose:
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_1'' }}'
-          - or:
-            - '{{ button_1 == {} }}'
-            - '{{ button_1_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input counter_clockwise_rotation_small_1
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input counter_clockwise_rotation_medium_1
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input counter_clockwise_rotation_large_1
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_2'' }}'
-          - or:
-            - '{{ button_2 == {} }}'
-            - '{{ button_2_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input counter_clockwise_rotation_small_2
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input counter_clockwise_rotation_medium_2
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input counter_clockwise_rotation_large_2
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_3'' }}'
-          - or:
-            - '{{ button_3 == {} }}'
-            - '{{ button_3_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input counter_clockwise_rotation_small_3
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input counter_clockwise_rotation_medium_3
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input counter_clockwise_rotation_large_3
-      - conditions: 
-        - and:
-          - '{{ states(current_light_helper) == ''button_4'' }}'
-          - or:
-            - '{{ button_4 == {} }}'
-            - '{{ button_4_action_dim == ''custom'' }}'
-        sequence:
-        - choose:
-          - conditions: '{{ step_size_name == ''Small'' }}'
-            sequence: !input counter_clockwise_rotation_small_4
-          - conditions: '{{ step_size_name == ''Medium'' }}'
-            sequence: !input counter_clockwise_rotation_medium_4
-          - conditions: '{{ step_size_name == ''Large'' }}'
-            sequence: !input counter_clockwise_rotation_large_4
       - conditions:
-        - '{{ current_light_helper != none }}'
-        - '{{ step_size == 255 }}'
+        - '{{ step_mode == ''StepMode.Up'' }}'
         sequence:
-        - service: light.turn_off
-          target: '{{ lights[states(current_light_helper)] }}'
+        - choose:
+          - conditions: 
+            - or:
+              - '{{ lights[last_button] == {} }}'
+              - '{{ actions_dim[last_button] == ''custom'' }}'
+            sequence:
+            - choose:
+              - conditions: '{{ last_button == ''button_1'' and step_size_name == ''Small'' }}'
+                sequence: !input clockwise_rotation_small_1
+              - conditions: '{{ last_button == ''button_2'' and step_size_name == ''Small'' }}'
+                sequence: !input clockwise_rotation_small_2
+              - conditions: '{{ last_button == ''button_3'' and step_size_name == ''Small'' }}'
+                sequence: !input clockwise_rotation_small_3
+              - conditions: '{{ last_button == ''button_4'' and step_size_name == ''Small'' }}'
+                sequence: !input clockwise_rotation_small_4
+              - conditions: '{{ last_button == ''button_1'' and step_size_name == ''Medium'' }}'
+                sequence: !input clockwise_rotation_medium_1
+              - conditions: '{{ last_button == ''button_2'' and step_size_name == ''Medium'' }}'
+                sequence: !input clockwise_rotation_medium_2
+              - conditions: '{{ last_button == ''button_3'' and step_size_name == ''Medium'' }}'
+                sequence: !input clockwise_rotation_medium_3
+              - conditions: '{{ last_button == ''button_4'' and step_size_name == ''Medium'' }}'
+                sequence: !input clockwise_rotation_medium_4
+              - conditions: '{{ last_button == ''button_1'' and step_size_name == ''Large'' }}'
+                sequence: !input clockwise_rotation_large_1
+              - conditions: '{{ last_button == ''button_2'' and step_size_name == ''Large'' }}'
+                sequence: !input clockwise_rotation_large_3
+              - conditions: '{{ last_button == ''button_3'' and tep_size_name == ''Large'' }}'
+                sequence: !input clockwise_rotation_large_3
+              - conditions: '{{ last_button == ''button_4'' and step_size_name == ''Large'' }}'
+                sequence: !input clockwise_rotation_large_4
+          - conditions: '{{ current_light_helper != none }}'
+            sequence:   
+            - service: light.turn_on
+              target: '{{ lights[states(current_light_helper)] }}'
+              data:
+                brightness_step_pct: '{{ step_size * dim_scale }}'
+                transition: 1
+          default:
+          - service: light.turn_on
+            target: '{{ lights["input button_1"] }}'
+            data:
+              brightness_step_pct: '{{ step_size * dim_scale }}'
+              transition: 1
       - conditions:
-        - "{{ current_light_helper != none }}"
-        - "{{ step_size != 255 }}"
+        - '{{ step_mode == ''StepMode.Down'' }}'
         sequence:
-        - service: light.turn_on
-          target: '{{ lights[states(current_light_helper)] }}'
-          data:
-            brightness_step_pct: '{{ -step_size * dim_scale }}'
-            transition: 1
-      default:
-      - service: light.turn_on
-        target: !input button_1
-        data:
-          brightness_step_pct: '{{ -step_size * dim_scale }}'
-          transition: 1
+        - choose:
+          - conditions: 
+            - or:
+              - '{{ lights[states(current_light_helper)] == {} }}'
+              - '{{ actions_dim[states(current_light_helper)] == ''custom'' }}'
+            sequence:
+            - choose:
+              - conditions: '{{ states(current_light_helper) == ''button_1'' and step_size_name == ''Small'' }}'
+                sequence: !input counter_clockwise_rotation_small_1
+              - conditions: '{{ states(current_light_helper) == ''button_2'' and step_size_name == ''Small'' }}'
+                sequence: !input counter_clockwise_rotation_small_2
+              - conditions: '{{ states(current_light_helper) == ''button_3'' and step_size_name == ''Small'' }}'
+                sequence: !input counter_clockwise_rotation_small_3
+              - conditions: '{{ states(current_light_helper) == ''button_4'' and step_size_name == ''Small'' }}'
+                sequence: !input counter_clockwise_rotation_small_4
+              - conditions: '{{ states(current_light_helper) == ''button_1'' and step_size_name == ''Medium'' }}'
+                sequence: !input counter_clockwise_rotation_medium_1
+              - conditions: '{{ states(current_light_helper) == ''button_2'' and step_size_name == ''Medium'' }}'
+                sequence: !input counter_clockwise_rotation_medium_2
+              - conditions: '{{ states(current_light_helper) == ''button_3'' and step_size_name == ''Medium'' }}'
+                sequence: !input counter_clockwise_rotation_medium_3
+              - conditions: '{{ states(current_light_helper) == ''button_4'' and step_size_name == ''Medium'' }}'
+                sequence: !input counter_clockwise_rotation_medium_4
+              - conditions: '{{ states(current_light_helper) == ''button_1'' and step_size_name == ''Large'' }}'
+                sequence: !input counter_clockwise_rotation_large_1
+              - conditions: '{{ states(current_light_helper) == ''button_2'' and step_size_name == ''Large'' }}'
+                sequence: !input counter_clockwise_rotation_large_3
+              - conditions: '{{ sstates(current_light_helper) == ''button_3'' and tep_size_name == ''Large'' }}'
+                sequence: !input counter_clockwise_rotation_large_3
+              - conditions: '{{ states(current_light_helper) == ''button_4'' and step_size_name == ''Large'' }}'
+                sequence: !input counter_clockwise_rotation_large_4
+          - conditions:
+            - '{{ current_light_helper != none }}'
+            - '{{ step_size == 255 }}'
+            sequence:
+            - service: light.turn_off
+              target: '{{ lights[states(current_light_helper)] }}'
+          - conditions:
+            - "{{ current_light_helper != none }}"
+            - "{{ step_size != 255 }}"
+            sequence:
+            - service: light.turn_on
+              target: '{{ lights[states(current_light_helper)] }}'
+              data:
+                brightness_step_pct: '{{ -step_size * dim_scale }}'
+                transition: 1
+          default:
+          - service: light.turn_on
+            target: '{{ lights["input button_1"] }}'
+            data:
+              brightness_step_pct: '{{ -step_size * dim_scale }}'
+              transition: 1
