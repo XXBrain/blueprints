@@ -112,61 +112,6 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
-#        area_1    :
-#          name: Name of area
-#          description: Name of the area where you want to toggle scenes
-#          default: ''
-#          selector:
-#            area: {}
-#        included_scenes_1:
-#          name: Included Scenes
-#          description: Additional scenes to be included
-#          default: []
-#          selector:
-#            entity:
-#              domain:
-#              - scene
-#              multiple: true
-#        excluded_scenes_1:
-#          name: Excluded Scenes
-#          description: Scenes to be excluded
-#          default: []
-#          selector:
-#            target:
-#              entity:
-#                domain:
-#                - scene
-#        transition_1:
-#          name: Transition time
-#          description: Transition time when switching between scenes
-#          default: 1
-#          selector:
-#            number:
-#              min: 0.0
-#              max: 10.0
-#              step: 0.1
-#              unit_of_measurement: s
-#              mode: slider
-#        use_static_order_1:
-#          name: Static order
-#          description: This automation is based on timestamps of the activation of the
-#            scenes. If this option is enabled a static order will be used instead of the
-#            dynamic one.
-#          default: false
-#          selector:
-#            boolean: {}
-#        reset_after_1:
-#          name: Reset After
-#          description: If the static order is activated, a timeout can be set after which
-#            the order is reset to the first scene. If 0 is set the timeout is disabled.
-#          default: 0
-#          selector:
-#            number:
-#              min: 0.0
-#              max: 120.0
-#              step: 1.0
-#              unit_of_measurement: s
-#              mode: slider
     button_1_custom:
       name: Button 1 - Custom Actions
       icon: mdi:numeric-1-circle-outline
@@ -772,13 +717,6 @@ variables:
     button_4: !input button_4_medium_rotation_max
   current_light_helper: !input current_light_helper
   dim_scale: !input dim_scale
-#  area_1: !input area_1
-#  included_scenes_1: !input included_scenes_1
-#  excluded_scenes_1: !input excluded_scenes_1
-#  reset_after_1: !input reset_after_1
-#  use_static_order_1: !input use_static_order_1
-#  last_triggered_1: '{{ as_timestamp(iif(state_attr(this.entity_id,''last_triggered_1'')
-#    == none, now(), state_attr(this.entity_id,''last_triggered_1''))) }}'
 trigger:
 - platform: event
   event_type: zha_event
@@ -829,19 +767,12 @@ action:
   - conditions: 
     - '{{ press_type == ''long_release'' }}'
     sequence:
-    - service: logbook.log
+    - service: input_text.set_value
+      target: 
+        entity_id: !input current_light_helper
       data:
-        name: button
-        message: >
-          {{ command }}
-          {{ actions_long[button] }}
-          {{ sequence_short[button] }}
-          {{ button == 'button_3' and (lights[button] == {}  or actions_long[button] == "custom")  }}
+        value: '{{ button }}'
     - choose:
-      - conditions: '{{ not use_custom_long }}'
-        sequence:
-          - service: '{{ actions_long[button] }}'
-            target: '{{ lights[button] }}'
       - conditions: '{{  button == "button_1" and use_custom_long }}'
         sequence: !input button_1_long_release
       - conditions: '{{  button == "button_2" and use_custom_long }}'
@@ -849,41 +780,23 @@ action:
       - conditions: '{{  button == "button_3" and use_custom_long }}'
         sequence: !input button_3_long_release
       - conditions: '{{  button == "button_4" and use_custom_long }}'
-        sequence: !input button_4_long_release 
+        sequence: !input button_4_long_release
+      - conditions: '{{ not use_custom_long }}'
+        sequence:
+          - service: '{{ actions_long[button] }}'
+            target: '{{ lights[button] }}'
+#          - service: logbook.log
+#            data:
+#              name: button
+#              message: >
+#                service: {{ actions_long[button] }}, 
+#                target: {{ lights[button] }}
   - conditions: 
     - '{{ press_type == ''double_press'' }}'
     sequence:
-    - service: logbook.log
-      data:
-        name: button
-        message: >
-          {{ command }}
     - choose:
       - conditions: '{{ command == ''button_1_double_press'' }}'
         sequence: !input button_1_double_press
-#        sequence:
-#        - service: scene.turn_on
-#          data_template:
-#            transition: !input transition_1
-#            entity_id: "{% set area_scenes_1 = states.scene_1 | selectattr('entity_id', 'in',
-#              area_entities_1(area_1)) | map(attribute='entity_id') | list %} {% set all_scenes_1
-#              = (area_scenes_1 | reject('in', excluded_scenes_1) | list) + included_scenes_1 %}\n
-#              {%
-#              if use_static_order_1 == true %}\n\n  {% set is_reset_1 = reset_after_1 > 0 and (as_timestamp(now())
-#              - last_triggered_1 >= reset_after_1) %}\n\n  {% if is_reset_1 == true %}\n    {{ all_scenes_1[0]
-#              }}\n  {% else %}\n    \n    {% set unknown_scenes_1 = expand(all_scenes_1) | selectattr('state',
-#              'eq', 'unknown') | map(attribute='entity_id') | list %}\n    {% set scenes_sorted_by_activation_1
-#              = expand(all_scenes_1) | sort(attribute='state', reverse = true) | map(attribute='entity_id')
-#              | reject('in', unknown_scenes_1) | list %}\n    {% set last_activated_scene_1 =
-#              scenes_sorted_by_activation_1[0] %}\n    {% set index_of_last_activated_scene_1
-#              = all_scenes_1.index(last_activated_scene_1) %}\n    {% set new_index_1 = index_of_last_activated_scene_1
-#              + 1 %}\n\n    {% if new_index_1 == all_scenes_1 | count %}\n      {{ all_scenes_1[0]
-#              }}\n    {% else %}\n      {{ all_scenes_1[new_index] }}\n    {% endif %}\n  {%
-#              endif %}\n{% else %}     \n  {% set unknown_scenes_1 = expand(all_scenes_1) | selectattr('state',
-#              'eq', 'unknown') | map(attribute='entity_id') | list %}\n  {% if unknown_scenes_1
-#              | count > 0 %}\n    {{ unknown_scenes_1[0] }}     \n  {% else %}\n    {% set known_scenes_1
-#              = expand(all_scenes_1) | sort(attribute='state', reverse = false) | map(attribute='entity_id')
-#              | list %}\n    {{ known_scenes_1[0] }}\n  {% endif %}\n{% endif %}\n"
       - conditions: '{{ command == ''button_2_double_press'' }}'
         sequence: !input button_2_double_press
       - conditions: '{{ command == ''button_3_double_press'' }}'
@@ -939,13 +852,13 @@ action:
           - conditions: '{{ current_light_helper != none }}'
             sequence:   
             - service: light.turn_on
-              target: '{{ lights[states(current_light_helper)] }}'
+              target: '{{ lights[last_button] }}'
               data:
                 brightness_step_pct: '{{ step_size * dim_scale }}'
                 transition: 1
           default:
           - service: light.turn_on
-            target: '{{ lights["input button_1"] }}'
+            target: '{{ lights["button_1"] }}'
             data:
               brightness_step_pct: '{{ step_size * dim_scale }}'
               transition: 1
@@ -955,8 +868,8 @@ action:
         - choose:
           - conditions: 
             - or:
-              - '{{ lights[states(current_light_helper)] == {} }}'
-              - '{{ actions_dim[states(current_light_helper)] == ''custom'' }}'
+              - '{{ lights[last_button] == {} }}'
+              - '{{ actions_dim[last_button] == ''custom'' }}'
             sequence:
             - choose:
               - conditions: '{{ states(current_light_helper) == ''button_1'' and step_size_name == ''Small'' }}'
@@ -984,23 +897,24 @@ action:
               - conditions: '{{ states(current_light_helper) == ''button_4'' and step_size_name == ''Large'' }}'
                 sequence: !input counter_clockwise_rotation_large_4
           - conditions:
-            - '{{ current_light_helper != none }}'
-            - '{{ step_size == 255 }}'
-            sequence:
-            - service: light.turn_off
-              target: '{{ lights[states(current_light_helper)] }}'
-          - conditions:
             - "{{ current_light_helper != none }}"
             - "{{ step_size != 255 }}"
             sequence:
             - service: light.turn_on
-              target: '{{ lights[states(current_light_helper)] }}'
+              target: '{{ lights[last_button] }}'
               data:
                 brightness_step_pct: '{{ -step_size * dim_scale }}'
                 transition: 1
-          default:
-          - service: light.turn_on
-            target: '{{ lights["input button_1"] }}'
-            data:
-              brightness_step_pct: '{{ -step_size * dim_scale }}'
-              transition: 1
+# is also fired on button hold
+#          - conditions:
+#            - '{{ current_light_helper != none }}'
+#            - '{{ step_size == 255 }}'
+#            sequence:
+#            - service: light.turn_off
+#              target: '{{ lights[last_button] }}'
+#          default:
+#          - service: light.turn_on
+#            target: '{{ lights["button_1"] }}'
+#            data:
+#              brightness_step_pct: '{{ -step_size * dim_scale }}'
+#t              transition: 1
