@@ -273,13 +273,6 @@ blueprint:
             You can also define a custom action in the section below that will overwrite 
             this option. 
           default: homeassistant.turn_off
-        button_2_long_prevent_on_change:
-          name: Prevent Long Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
-          default: false
-          selector:
-            boolean:
           selector:
             select:
               options:
@@ -293,6 +286,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_2_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_2_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or
@@ -846,7 +846,7 @@ action:
       - conditions: '{{ not short_prevent_on_change and not use_custom_short }}'
         sequence:
           - service: '{{ actions_short[button] }}'
-            target:
+#            target:
 #              entity_id: '{{ state_attr("scene.x_mas", "entity_id") }}'
             target: '{{ lights[button] }}'
       - conditions: '{{ not short_prevent_on_change and button == "button_1" and use_custom_short }}'
