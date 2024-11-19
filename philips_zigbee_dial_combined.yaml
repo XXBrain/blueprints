@@ -54,7 +54,17 @@ blueprint:
           selector:
             target:
               entity:
-              - {}
+                domain:
+                - light
+#        button_1_scene:
+#          name: Scene
+#          description: Scene to be activated
+#          default: []
+#          selector:
+#            entity:
+#              domain:
+#              - scene
+#              multiple: false
         button_1_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button or 
@@ -76,6 +86,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_1_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_1_action_long:
           name: Long Release Action
           description: Action triggered by long pressing and releasing the button or 
@@ -97,6 +114,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_1_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_1_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or
@@ -233,6 +257,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_2_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_2_action_long:
           name: Short Release Action
           description: Action triggered by long pressing and releasing the button or 
@@ -241,6 +272,13 @@ blueprint:
             You can also define a custom action in the section below that will overwrite 
             this option. 
           default: homeassistant.turn_off
+        button_2_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
           selector:
             select:
               options:
@@ -391,6 +429,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_3_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_3_action_long:
           name: Long Release Action
           description: Action triggered by long pressing and releasing the button or 
@@ -412,6 +457,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_3_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_3_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or
@@ -548,6 +600,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_4_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_4_action_long:
           name: Long Release Action
           description: Action triggered by long pressing and releasing the button or 
@@ -569,6 +628,13 @@ blueprint:
               mode: dropdown
               custom_value: true
               sort: false
+        button_4_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked active (last clicked) button changes the 
+            action prevent will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
         button_4_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or
@@ -680,6 +746,8 @@ variables:
     button_2: !input button_2_enities
     button_3: !input button_3_enities
     button_4: !input button_4_enities
+#  scenes:
+#    button_1: !input button_1_scene
   actions_short:
     button_1: !input button_1_action_short
     button_2: !input button_2_action_short
@@ -690,11 +758,21 @@ variables:
     button_2: !input button_2_short_release
     button_3: !input button_3_short_release
     button_4: !input button_4_short_release
+  short_prevent:
+    button_1: !input button_1_short_prevent_on_change
+    button_2: !input button_2_short_prevent_on_change
+    button_3: !input button_3_short_prevent_on_change
+    button_4: !input button_4_short_prevent_on_change
   actions_long:
     button_1: !input button_1_action_long
     button_2: !input button_2_action_long
     button_3: !input button_3_action_long
     button_4: !input button_4_action_long
+  long_prevent:
+    button_1: !input button_1_long_prevent_on_change
+    button_2: !input button_2_long_prevent_on_change
+    button_3: !input button_3_long_prevent_on_change
+    button_4: !input button_4_long_prevent_on_change
   sequence_long:
     button_1: !input button_1_long_release
     button_2: !input button_2_long_release
@@ -726,6 +804,7 @@ action:
 - variables:
     selected_light: none
     command: '{{ trigger.event.data.command }}'
+    last_button: '{{ states(current_light_helper) }}'
     button: '{% if (trigger.event.data.args is defined) %}{{trigger.event.data.args.button}}{%
       endif %}'
     press_type: '{% if (trigger.event.data.args is defined) %}{{trigger.event.data.args.press_type}}{%
@@ -740,29 +819,42 @@ action:
       is defined) %}{{trigger.event.data.params.step_mode}}{% endif %}'
     scene: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.scene_id
       is defined) %}{{trigger.event.data.params.scene_id}}{% endif %}'
-    use_custom_short: '{{ sequence_short[button] != [] }}'  
+    use_custom_short: '{{ sequence_short[button] != [] }}'
     use_custom_long: '{{ sequence_long[button] != [] }}'
+    short_prevent_on_change: '{{ short_prevent[button] and button != last_button }}'
+    long_prevent_on_change: '{{ long_prevent[button]  and button != last_button }}'
 - choose:
   - conditions: 
     - '{{ press_type == ''short_release'' }}'
     sequence:
+    - service: logbook.log
+      data:
+        name: button
+        message: >
+          service: {{ actions_long[button] }}, 
+          target: {{ lights[button] }}
+#          button_scene: {{ scenes[button] }} - {{ scenes[button] is defined }},
+#          lights: {{ lights[button] }},
+#          scene lights: {{ state_attr("scene.x_mas", "entity_id") }}
     - service: input_text.set_value
-      target: 
+      target:
         entity_id: !input current_light_helper
       data:
         value: '{{ button }}'
     - choose:
-      - conditions: '{{ not use_custom_short }}'
+      - conditions: '{{ not short_prevent_on_change and not use_custom_short }}'
         sequence:
           - service: '{{ actions_short[button] }}'
+            target:
+#              entity_id: '{{ state_attr("scene.x_mas", "entity_id") }}'
             target: '{{ lights[button] }}'
-      - conditions: '{{ button == "button_1" and use_custom_short }}'
+      - conditions: '{{ not short_prevent_on_change and button == "button_1" and use_custom_short }}'
         sequence: !input button_1_short_release
-      - conditions: '{{ button == "button_2" and use_custom_short }}'
+      - conditions: '{{ not short_prevent_on_change and button == "button_2" and use_custom_short }}'
         sequence: !input button_2_short_release
-      - conditions: '{{ button == "button_3" and use_custom_short }}'
+      - conditions: '{{ not short_prevent_on_change and button == "button_3" and use_custom_short }}'
         sequence: !input button_3_short_release
-      - conditions: '{{ button == "button_4" and use_custom_short }}'
+      - conditions: '{{ not short_prevent_on_change and button == "button_4" and use_custom_short }}'
         sequence: !input button_4_short_release
   - conditions: 
     - '{{ press_type == ''long_release'' }}'
@@ -773,15 +865,15 @@ action:
       data:
         value: '{{ button }}'
     - choose:
-      - conditions: '{{  button == "button_1" and use_custom_long }}'
+      - conditions: '{{ not long_prevent_on_change and button == "button_1" and use_custom_long }}'
         sequence: !input button_1_long_release
-      - conditions: '{{  button == "button_2" and use_custom_long }}'
+      - conditions: '{{ not long_prevent_on_change and button == "button_2" and use_custom_long }}'
         sequence: !input button_2_long_release
-      - conditions: '{{  button == "button_3" and use_custom_long }}'
+      - conditions: '{{ not long_prevent_on_change and button == "button_3" and use_custom_long }}'
         sequence: !input button_3_long_release
-      - conditions: '{{  button == "button_4" and use_custom_long }}'
+      - conditions: '{{ not long_prevent_on_change and button == "button_4" and use_custom_long }}'
         sequence: !input button_4_long_release
-      - conditions: '{{ not use_custom_long }}'
+      - conditions: '{{ not long_prevent_on_change and not use_custom_long }}'
         sequence:
           - service: '{{ actions_long[button] }}'
             target: '{{ lights[button] }}'
@@ -808,7 +900,7 @@ action:
     - '{{ command == ''step_with_on_off'' }}'
     sequence:
     - variables:
-        last_button: '{{ states(current_light_helper) }}'
+        dim_target: #              entity_id: '{{ state_attr("scene.x_mas", "entity_id") }}'
         small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
         medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
         step_size_name: "{% if step_size <= small_rotation_max_button %}\n  {{ \"Small\"
@@ -852,6 +944,13 @@ action:
           - conditions: '{{ current_light_helper != none }}'
             sequence:   
             - service: light.turn_on
+#              target:
+#                entity_id: >
+#                  {% if scenes[last_button] is defined %}
+#                    state_attr(scenes[last_button], "entity_id")
+#                  {% else %}
+#                    lights[last_button]
+#                  {% endif %}
               target: '{{ lights[last_button] }}'
               data:
                 brightness_step_pct: '{{ step_size * dim_scale }}'
@@ -896,6 +995,12 @@ action:
                 sequence: !input counter_clockwise_rotation_large_3
               - conditions: '{{ states(current_light_helper) == ''button_4'' and step_size_name == ''Large'' }}'
                 sequence: !input counter_clockwise_rotation_large_4
+#          - conditions:
+#            - '{{ current_light_helper != none }}'
+#            - '{{ step_size == 255 }}'
+#            sequence:
+#            - service: light.turn_off
+#              target: '{{ lights[last_button] }}'
           - conditions:
             - "{{ current_light_helper != none }}"
             - "{{ step_size != 255 }}"
@@ -905,13 +1010,6 @@ action:
               data:
                 brightness_step_pct: '{{ -step_size * dim_scale }}'
                 transition: 1
-# is also fired on button hold
-#          - conditions:
-#            - '{{ current_light_helper != none }}'
-#            - '{{ step_size == 255 }}'
-#            sequence:
-#            - service: light.turn_off
-#              target: '{{ lights[last_button] }}'
 #          default:
 #          - service: light.turn_on
 #            target: '{{ lights["button_1"] }}'
