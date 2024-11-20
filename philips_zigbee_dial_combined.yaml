@@ -54,22 +54,24 @@ blueprint:
           selector:
             target:
               entity:
-                domain:
-                - light
-                - scene
-#        button_1_scene:
-#          name: Scene
-#          description: Scene to be activated
-#          default: []
-#          selector:
-#            entity:
-#              domain:
-#              - scene
-#              multiple: false
+              - {}
+#                domain:
+#                - light
+#                - scene
+        button_1_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
         button_1_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
+            type in any other service that is called with the selected lights entity ids
             as target.
             You can also define a custom action in the section below that will overwrite 
             this option. 
@@ -83,21 +85,23 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_1_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
         button_1_action_long:
           name: Long Release Action
           description: Action triggered by long pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
+            type in any other service that is called with the selected lights entity ids
             as target.
             You can also define a custom action in the section below that will overwrite 
             this option.  
@@ -111,14 +115,16 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_1_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
@@ -130,8 +136,10 @@ blueprint:
           selector:
             select:
               options:
-              - label: Default
+              - label: Default (Dim Lights)
                 value: default
+              - label: Dim Scene Lights
+                value: scene
               - label: Custom
                 value: custom
               multiple: false
@@ -237,6 +245,16 @@ blueprint:
             target:
               entity:
               - {}
+        button_2_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
         button_2_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button or 
@@ -254,14 +272,16 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_2_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
@@ -282,14 +302,16 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_2_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
@@ -301,8 +323,10 @@ blueprint:
           selector:
             select:
               options:
-              - label: Default
+              - label: Default (Dim Lights)
                 value: default
+              - label: Dim Scene Lights
+                value: scene
               - label: Custom
                 value: custom
               multiple: false
@@ -408,6 +432,16 @@ blueprint:
             target:
               entity:
               - {}
+        button_3_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
         button_3_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button or 
@@ -426,14 +460,16 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_3_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
@@ -454,14 +490,16 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_3_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
@@ -473,8 +511,10 @@ blueprint:
           selector:
             select:
               options:
-              - label: Default
+              - label: Default (Dim Lights)
                 value: default
+              - label: Dim Scene Lights
+                value: scene
               - label: Custom
                 value: custom
               multiple: false
@@ -580,6 +620,16 @@ blueprint:
             target:
               entity:
               - {}
+        button_4_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
         button_4_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button or 
@@ -597,14 +647,16 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_4_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
@@ -625,14 +677,16 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
               multiple: false
               mode: dropdown
               custom_value: true
               sort: false
         button_4_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked active (last clicked) button changes the 
-            action prevent will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
           default: false
           selector:
             boolean:
@@ -644,8 +698,10 @@ blueprint:
           selector:
             select:
               options:
-              - label: Default
+              - label: Default (Dim Lights)
                 value: default
+              - label: Dim Scene Lights
+                value: scene
               - label: Custom
                 value: custom
               multiple: false
@@ -747,8 +803,11 @@ variables:
     button_2: !input button_2_enities
     button_3: !input button_3_enities
     button_4: !input button_4_enities
-#  scenes:
-#    button_1: !input button_1_scene
+  scenes:
+    button_1: !input button_1_scene
+    button_2: !input button_2_scene
+    button_3: !input button_3_scene
+    button_4: !input button_4_scene
   actions_short:
     button_1: !input button_1_action_short
     button_2: !input button_2_action_short
@@ -794,6 +853,32 @@ variables:
     button_2: !input button_2_medium_rotation_max
     button_3: !input button_3_medium_rotation_max
     button_4: !input button_4_medium_rotation_max
+  dim_entities:
+    button_1:
+      entity_id: '{% if actions_dim["button_1"] == "scene" and scenes["button_1"] != "None" %}
+          {{ state_attr(scenes["button_1"], "entity_id") }}
+        {% else %}
+          {{ lights["button_1"]["entity_id"] }}
+        {% endif %}'
+    button_2:
+      entity_id: '{% if actions_dim["button_2"] == "scene" and scenes["button_2"] != "None" %}
+          {{ state_attr(scenes["button_2"], "entity_id") }}
+        {% else %}
+          {{ lights["button_2"]["entity_id"] }}
+        {% endif %}'
+    button_3:
+      entity_id: '{% if actions_dim["button_3"] == "scene" and scenes["button_3"] != "None" %}
+          {{ state_attr(scenes["button_3"], "entity_id") }}
+        {% else %}
+          {{ lights["button_3"]["entity_id"] }}
+        {% endif %}'
+    button_4:
+      entity_id: '{% if actions_dim["button_4"] == "scene" and scenes["button_4"] != "None" %}
+          {{ state_attr(scenes["button_4"], "entity_id") }}
+        {% else %}
+          {{ lights["button_4"]["entity_id"] }}
+        {% endif %}'
+      
   current_light_helper: !input current_light_helper
   dim_scale: !input dim_scale
 trigger:
@@ -823,32 +908,32 @@ action:
     use_custom_short: '{{ sequence_short[button] != [] }}'
     use_custom_long: '{{ sequence_long[button] != [] }}'
     short_prevent_on_change: '{{ short_prevent[button] and button != last_button }}'
-    long_prevent_on_change: '{{ long_prevent[button]  and button != last_button }}'
+- service: logbook.log
+  data:
+    name: button
+    message: >
+     service: {{ actions_long[button] }}, 
+      target: {{ dim_entities[button] }}
+      {{ scenes[button] != 'None'}} - {{ scenes[button] }}
 - choose:
   - conditions: 
     - '{{ press_type == ''short_release'' }}'
     sequence:
-    - service: logbook.log
-      data:
-        name: button
-        message: >
-          service: {{ actions_long[button] }}, 
-          target: {{ lights[button] }}
-#          button_scene: {{ scenes[button] }} - {{ scenes[button] is defined }},
-#          lights: {{ lights[button] }},
-#          scene lights: {{ state_attr("scene.x_mas", "entity_id") }}
     - service: input_text.set_value
       target:
         entity_id: !input current_light_helper
       data:
         value: '{{ button }}'
     - choose:
-      - conditions: '{{ not short_prevent_on_change and not use_custom_short }}'
+      - conditions: '{{ not short_prevent_on_change and not use_custom_short and actions_short[button] != "scene.turn_on"}}'
         sequence:
           - service: '{{ actions_short[button] }}'
-#            target:
-#              entity_id: '{{ state_attr("scene.x_mas", "entity_id") }}'
             target: '{{ lights[button] }}'
+      - conditions: '{{ not short_prevent_on_change and not use_custom_short and scenes[button] != "None" and actions_short[button] == "scene.turn_on"}}'
+        sequence:
+          - service: '{{ actions_short[button] }}'
+            target:
+              entity_id: '{{ scenes[button] }}'
       - conditions: '{{ not short_prevent_on_change and button == "button_1" and use_custom_short }}'
         sequence: !input button_1_short_release
       - conditions: '{{ not short_prevent_on_change and button == "button_2" and use_custom_short }}'
@@ -866,6 +951,15 @@ action:
       data:
         value: '{{ button }}'
     - choose:
+      - conditions: '{{ not long_prevent_on_change and not use_custom_long and actions_long[button] != "scene.turn_on"}}'
+        sequence:
+          - service: '{{ actions_long[button] }}'
+            target: '{{ dim_entities[button] }}'
+      - conditions: '{{ not long_prevent_on_change and not use_custom_long and scenes[button] is defined and actions_long[button] == "scene.turn_on"}}'
+        sequence:
+          - service: '{{ actions_long[button] }}'
+            target:
+              entity_id: '{{ scenes[button] }}'
       - conditions: '{{ not long_prevent_on_change and button == "button_1" and use_custom_long }}'
         sequence: !input button_1_long_release
       - conditions: '{{ not long_prevent_on_change and button == "button_2" and use_custom_long }}'
@@ -874,16 +968,6 @@ action:
         sequence: !input button_3_long_release
       - conditions: '{{ not long_prevent_on_change and button == "button_4" and use_custom_long }}'
         sequence: !input button_4_long_release
-      - conditions: '{{ not long_prevent_on_change and not use_custom_long }}'
-        sequence:
-          - service: '{{ actions_long[button] }}'
-            target: '{{ lights[button] }}'
-#          - service: logbook.log
-#            data:
-#              name: button
-#              message: >
-#                service: {{ actions_long[button] }}, 
-#                target: {{ lights[button] }}
   - conditions: 
     - '{{ press_type == ''double_press'' }}'
     sequence:
@@ -901,7 +985,6 @@ action:
     - '{{ command == ''step_with_on_off'' }}'
     sequence:
     - variables:
-        dim_target: #              entity_id: '{{ state_attr("scene.x_mas", "entity_id") }}'
         small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
         medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
         step_size_name: "{% if step_size <= small_rotation_max_button %}\n  {{ \"Small\"
@@ -945,14 +1028,7 @@ action:
           - conditions: '{{ current_light_helper != none }}'
             sequence:   
             - service: light.turn_on
-#              target:
-#                entity_id: >
-#                  {% if scenes[last_button] is defined %}
-#                    state_attr(scenes[last_button], "entity_id")
-#                  {% else %}
-#                    lights[last_button]
-#                  {% endif %}
-              target: '{{ lights[last_button] }}'
+              target: '{{ dim_entities[last_button] }}'
               data:
                 brightness_step_pct: '{{ step_size * dim_scale }}'
                 transition: 1
@@ -1001,13 +1077,13 @@ action:
 #            - '{{ step_size == 255 }}'
 #            sequence:
 #            - service: light.turn_off
-#              target: '{{ lights[last_button] }}'
+#              target: '{{ dim_entities[last_button] }}'
           - conditions:
             - "{{ current_light_helper != none }}"
             - "{{ step_size != 255 }}"
             sequence:
             - service: light.turn_on
-              target: '{{ lights[last_button] }}'
+              target: '{{ dim_entities[last_button] }}'
               data:
                 brightness_step_pct: '{{ -step_size * dim_scale }}'
                 transition: 1
