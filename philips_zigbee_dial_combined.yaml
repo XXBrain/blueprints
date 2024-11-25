@@ -55,9 +55,6 @@ blueprint:
             target:
               entity:
               - {}
-#                domain:
-#                - light
-#                - scene
         button_1_scene:
           name: Scene
           description: Single scene to be activated with the first button 
@@ -87,6 +84,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -117,6 +116,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -142,6 +143,8 @@ blueprint:
                 value: scene
               - label: Custom
                 value: custom
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               sort: false
@@ -150,13 +153,13 @@ blueprint:
       icon: mdi:numeric-1-circle-outline
       collapsed: true
       input:
-        button_1_short_release:
+        button_1_short_custom:
           name: Button 1 (Short Release)
           description: Action to run on a release of Button 3 after a short press
           default: []
           selector:
             action: {}
-        button_1_long_release:
+        button_1_long_custom:
           name: Button 1 (Long Release)
           description: Action to run when Button 3 is released after a long press
           default: []
@@ -274,6 +277,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -304,6 +309,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -337,13 +344,13 @@ blueprint:
       icon: mdi:numeric-2-circle-outline
       collapsed: true
       input:
-        button_2_short_release:
+        button_2_short_custom:
           name: Button 2 (Short Release)
           description: Action to run when Button 3 is released after a short press
           default: []
           selector:
             action: {}
-        button_2_long_release:
+        button_2_long_custom:
           name: Button 2 (Long Release)
           default: []
           description: Action to run when Button 3 is released after a long press
@@ -462,6 +469,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -492,6 +501,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -525,13 +536,13 @@ blueprint:
       icon: mdi:numeric-3-circle-outline
       collapsed: true
       input:
-        button_3_short_release:
+        button_3_short_custom:
           name: Button 3 (Short Release)
           description: Action to run on a release of Button 3 after a short press
           default: []
           selector:
             action: {}
-        button_3_long_release:
+        button_3_long_custom:
           name: Button 3 (Long Release)
           description: Action to run when Button 3 is released after a long press
           default: []
@@ -649,6 +660,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -679,6 +692,8 @@ blueprint:
                 value: homeassistant.toggle
               - label: Scene Turn On
                 value: scene.turn_on
+              - label: None
+                value: None
               multiple: false
               mode: dropdown
               custom_value: true
@@ -712,13 +727,13 @@ blueprint:
       icon: mdi:numeric-4-circle-outline
       collapsed: true
       input:
-        button_4_short_release:
+        button_4_short_custom:
           name: Button 4 (Short Release)
           description: Action to run on a release of Button 3 after a short press
           default: []
           selector:
             action: {}
-        button_4_long_release:
+        button_4_long_custom:
           name: Button 4 (Long Release)
           description: Action to run when Button 3 is released after a long press
           default: []
@@ -808,36 +823,54 @@ variables:
     button_2: !input button_2_scene
     button_3: !input button_3_scene
     button_4: !input button_4_scene
-  actions_short:
-    button_1: !input button_1_action_short
-    button_2: !input button_2_action_short
-    button_3: !input button_3_action_short
-    button_4: !input button_4_action_short
-  sequence_short:
-    button_1: !input button_1_short_release
-    button_2: !input button_2_short_release
-    button_3: !input button_3_short_release
-    button_4: !input button_4_short_release
-  short_prevent:
-    button_1: !input button_1_short_prevent_on_change
-    button_2: !input button_2_short_prevent_on_change
-    button_3: !input button_3_short_prevent_on_change
-    button_4: !input button_4_short_prevent_on_change
-  actions_long:
-    button_1: !input button_1_action_long
-    button_2: !input button_2_action_long
-    button_3: !input button_3_action_long
-    button_4: !input button_4_action_long
-  long_prevent:
-    button_1: !input button_1_long_prevent_on_change
-    button_2: !input button_2_long_prevent_on_change
-    button_3: !input button_3_long_prevent_on_change
-    button_4: !input button_4_long_prevent_on_change
-  sequence_long:
-    button_1: !input button_1_long_release
-    button_2: !input button_2_long_release
-    button_3: !input button_3_long_release
-    button_4: !input button_4_long_release
+  actions_default:
+    short_release:
+      button_1: !input button_1_action_short
+      button_2: !input button_2_action_short
+      button_3: !input button_3_action_short
+      button_4: !input button_4_action_short
+    long_release:
+      button_1: !input button_1_action_long
+      button_2: !input button_2_action_long
+      button_3: !input button_3_action_long
+      button_4: !input button_4_action_long
+    double_press:
+      button_1: None
+      button_2: None
+      button_3: None
+      button_4: None
+  actions_custom:
+    short_release:
+      button_1: !input button_1_short_custom
+      button_2: !input button_2_short_custom
+      button_3: !input button_3_short_custom
+      button_4: !input button_4_short_custom
+    long_release:
+      button_1: !input button_1_long_custom
+      button_2: !input button_2_long_custom
+      button_3: !input button_3_long_custom
+      button_4: !input button_4_long_custom
+    double_press:
+      button_1: !input button_1_double_press
+      button_2: !input button_2_double_press
+      button_3: !input button_3_double_press
+      button_4: !input button_4_double_press
+  prevents_on_change:
+    short_release:
+      button_1: !input button_1_short_prevent_on_change
+      button_2: !input button_2_short_prevent_on_change
+      button_3: !input button_3_short_prevent_on_change
+      button_4: !input button_4_short_prevent_on_change
+    long_release:
+      button_1: !input button_1_long_prevent_on_change
+      button_2: !input button_2_long_prevent_on_change
+      button_3: !input button_3_long_prevent_on_change
+      button_4: !input button_4_long_prevent_on_change
+    double_press:
+      button_1: false
+      button_2: false
+      button_3: false
+      button_4: false
   actions_dim:  
     button_1: !input button_1_action_dim
     button_2: !input button_2_action_dim
@@ -905,84 +938,83 @@ action:
       is defined) %}{{trigger.event.data.params.step_mode}}{% endif %}'
     scene: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.scene_id
       is defined) %}{{trigger.event.data.params.scene_id}}{% endif %}'
-    use_custom_short: '{{ sequence_short[button] != [] }}'
-    use_custom_long: '{{ sequence_long[button] != [] }}'
-    short_prevent_on_change: '{{ short_prevent[button] and button != last_button }}'
-- service: logbook.log
-  data:
-    name: button
-    message: >
-     service: {{ actions_long[button] }}, 
-      target: {{ dim_entities[button] }}
-      {{ scenes[button] != 'None'}} - {{ scenes[button] }}
+#- service: logbook.log
+#  data:
+#    name: dial1
+#    message: >
+#      press_type: {{ press_type }},
+#      target: {{ dim_entities[button] }},
+#      button: {{ button }},
 - choose:
-  - conditions: 
-    - '{{ press_type == ''short_release'' }}'
+  - conditions: '{{ press_type != ""}}'
     sequence:
+    - variables:
+        action_default: '{{ actions_default[press_type][button] }}'
+        use_default: '{{ action_default != None }}'
+        use_custom: '{{ actions_custom[press_type][button] != [] }}'
+        prevent_on_change: '{{ prevents_on_change[press_type][button] and button != last_button }}'
+    - service: logbook.log
+      data:
+        name: dial2
+        message: >
+          button: {{ button }},
+          press_type: {{ press_type }},
+          use_default: {{ use_default }},
+          use_custom: {{ use_custom }},
+          service: {{ action_default }},
+          prevent_on_change: {{ prevent_on_change }},
     - service: input_text.set_value
       target:
         entity_id: !input current_light_helper
       data:
         value: '{{ button }}'
     - choose:
-      - conditions: '{{ not short_prevent_on_change and not use_custom_short and actions_short[button] != "scene.turn_on"}}'
+      - conditions: '{{ use_default and not prevent_on_change and action_default != "scene.turn_on"}}'
         sequence:
-          - service: '{{ actions_short[button] }}'
+          - service: '{{ action_default }}'
             target: '{{ lights[button] }}'
-      - conditions: '{{ not short_prevent_on_change and not use_custom_short and scenes[button] != "None" and actions_short[button] == "scene.turn_on"}}'
+      - conditions: '{{ use_default and not prevent_on_change and scenes[button] != "None" and action_default == "scene.turn_on"}}'
         sequence:
-          - service: '{{ actions_short[button] }}'
+          - service: '{{ action_default }}'
             target:
               entity_id: '{{ scenes[button] }}'
-      - conditions: '{{ not short_prevent_on_change and button == "button_1" and use_custom_short }}'
-        sequence: !input button_1_short_release
-      - conditions: '{{ not short_prevent_on_change and button == "button_2" and use_custom_short }}'
-        sequence: !input button_2_short_release
-      - conditions: '{{ not short_prevent_on_change and button == "button_3" and use_custom_short }}'
-        sequence: !input button_3_short_release
-      - conditions: '{{ not short_prevent_on_change and button == "button_4" and use_custom_short }}'
-        sequence: !input button_4_short_release
-  - conditions: 
-    - '{{ press_type == ''long_release'' }}'
-    sequence:
-    - service: input_text.set_value
-      target: 
-        entity_id: !input current_light_helper
-      data:
-        value: '{{ button }}'
     - choose:
-      - conditions: '{{ not long_prevent_on_change and not use_custom_long and actions_long[button] != "scene.turn_on"}}'
+      - conditions: '{{ press_type == ''short_release'' and use_custom and not prevent_on_change }}'
         sequence:
-          - service: '{{ actions_long[button] }}'
-            target: '{{ dim_entities[button] }}'
-      - conditions: '{{ not long_prevent_on_change and not use_custom_long and scenes[button] is defined and actions_long[button] == "scene.turn_on"}}'
+        - choose:
+          - conditions: '{{ button == "button_1" }}'
+            sequence: !input button_1_short_custom
+          - conditions: '{{ button == "button_2" }}'
+            sequence: !input button_2_short_custom
+          - conditions: '{{ button == "button_3" }}'
+            sequence: !input button_3_short_custom
+          - conditions: '{{ button == "button_4" }}'
+            sequence: !input button_4_short_custom
+      - conditions: '{{ press_type == ''long_release'' and use_custom and not prevent_on_change }}'
         sequence:
-          - service: '{{ actions_long[button] }}'
-            target:
-              entity_id: '{{ scenes[button] }}'
-      - conditions: '{{ not long_prevent_on_change and button == "button_1" and use_custom_long }}'
-        sequence: !input button_1_long_release
-      - conditions: '{{ not long_prevent_on_change and button == "button_2" and use_custom_long }}'
-        sequence: !input button_2_long_release
-      - conditions: '{{ not long_prevent_on_change and button == "button_3" and use_custom_long }}'
-        sequence: !input button_3_long_release
-      - conditions: '{{ not long_prevent_on_change and button == "button_4" and use_custom_long }}'
-        sequence: !input button_4_long_release
-  - conditions: 
-    - '{{ press_type == ''double_press'' }}'
-    sequence:
+        - choose:
+          - conditions: '{{ button == "button_1" }}'
+            sequence: !input button_1_long_custom
+          - conditions: '{{ button == "button_2" }}'
+            sequence: !input button_2_long_custom
+          - conditions: '{{ button == "button_3" }}'
+            sequence: !input button_3_long_custom
+          - conditions: '{{ button == "button_4" }}'
+            sequence: !input button_4_long_custom
     - choose:
-      - conditions: '{{ command == ''button_1_double_press'' }}'
-        sequence: !input button_1_double_press
-      - conditions: '{{ command == ''button_2_double_press'' }}'
-        sequence: !input button_2_double_press
-      - conditions: '{{ command == ''button_3_double_press'' }}'
-        sequence: !input button_3_double_press
-      - conditions: '{{ command == ''button_4_double_press'' }}'
-        sequence: !input button_4_double_press
+      - conditions: '{{ press_type == ''double_press'' }}'
+        sequence:
+        - choose:
+          - conditions: '{{ command == "button_1_double_press" }}'
+            sequence: !input button_1_double_press
+          - conditions: '{{ command == "button_2_double_press" }}'
+            sequence: !input button_2_double_press
+          - conditions: '{{ command == "button_3_double_press" }}'
+            sequence: !input button_3_double_press
+          - conditions: '{{ command == "button_4_double_press" }}'
+            sequence: !input button_4_double_press
 - choose:
-  - conditions:
-    - '{{ command == ''step_with_on_off'' }}'
+  - conditions: '{{ command == ''step_with_on_off'' }}'
     sequence:
     - variables:
         small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
