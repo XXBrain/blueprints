@@ -1,0 +1,1089 @@
+blueprint:
+  name: Philips Tap Dial Switch 4 Lights or Custom (Z2M)
+  description: 'Control lights with a Philips Hue Tap Switch. Use the four buttons
+    to control up to four light(s) with an on, off or toggle or custom actions.
+    Supports short release and long release each beheaviour can 
+    configured seperatly.
+    The dial can be used to dim the most recently used lights or call a custom 
+    rotation action for that button.
+    based on 
+    apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
+    gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af'
+  domain: automation
+  input:
+    mqtt_topic:
+      name: MQTT Topic
+      description: Topic of the Philips Hue Tap Dial Switch
+      default: zigbee2mqtt/<device name>
+    current_light_helper:
+      name: (OPTIONAL) Current Light
+      description: Text helper to track the current light for dimming and actions. Set for the dimmer
+        controls and action configuration to change which light they are controlling according to the last
+        one turned on.
+      default:
+      selector:
+        entity:
+          domain:
+          - input_text
+          multiple: false
+    dim_scale:
+      name: Diming Scale
+      description: Scale factor for the dimming. This value will be multiplied by
+        the value given from the dial. So lower number, more gradual dimming. Larger
+        number, faster dimming.
+      default: 1.0
+      selector:
+        number:
+          min: 0.0
+          max: 5.0
+          step: 0.01
+          mode: slider
+    button_1_lights:
+      name: Button 1 - Lights
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_1_enities:
+          name: Lights
+          description: The light(s) to control with first button
+          default: {}
+          selector:
+            target:
+              entity:
+              - {}
+        button_1_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
+        button_1_action_short:
+          name: Short Release Action
+          description: Action triggered by short pressing and releasing the button or 
+            type in any other service that is called with the selected lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_on
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_1_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_1_action_long:
+          name: Long Release Action
+          description: Action triggered by long pressing and releasing the button or 
+            type in any other service that is called with the selected lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option.  
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_1_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_1_action_dim:
+          name: Dim Actions
+          description: Define if the default dimming behaviour should be used or
+            the actions which can be denined in the custom section below.
+          default: default
+          selector:
+            select:
+              options:
+              - label: Default (Dim Lights)
+                value: default
+              - label: Dim Scene Lights
+                value: scene
+              - label: Custom
+                value: custom
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              sort: false
+    button_1_custom:
+      name: Button 1 - Custom Actions
+      icon: mdi:numeric-1-circle-outline
+      collapsed: true
+      input:
+        button_1_short_custom:
+          name: Button 1 (Short Release)
+          description: Action to run on a release of Button 3 after a short press
+          default: []
+          selector:
+            action: {}
+        button_1_long_custom:
+          name: Button 1 (Long Release)
+          description: Action to run when Button 3 is released after a long press
+          default: []
+          selector:
+            action: {}
+        button_1_small_rotation_max:
+          name: Small Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Small Rotation\".\nA rotation
+            event with a step size between 1 and this value (inclusively) \nwill cause
+            either the clockwise or counterclockwise \"small\" rotation action\nto
+            run\n"
+          default: 13
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        button_1_medium_rotation_max:
+          name: Medium Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Medium Rotation\".\nA rotation
+            event with a \"Step Size\" greater than the \"Small Rotation Maximum\",\nand
+            less than or equal to this value (inclusively) will cause either the\nclockwise
+            or counterclockwise \"medium\" rotation action to run\n\n** A rotation
+            event with a \"Step Size\" greater than this value will be treated \nas
+            a \"Large Rotation\" **\n"
+          default: 24
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        clockwise_rotation_small_1:
+          name: Clockwise Rotation - Small
+          description: Action to run when a small clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_medium_1:
+          name: Clockwise Rotation - Medium
+          description: Action to run when a medium clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_large_1:
+          name: Clockwise Rotation - Large
+          description: Action to run when a large clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_small_1:
+          name: Counterclockwise Rotation - Small
+          description: Action to run when a small counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_medium_1:
+          name: Counterclockwise Rotation - Medium
+          description: Action to run when a medium counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_large_1:
+          name: Counterclockwise Rotation - Large
+          description: Action to run when a large counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+    button_2_lights:
+      name: Button 2 - Lights
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_2_enities:
+          name: Lights
+          description: The light(s) to control with first button
+          default: {}
+          selector:
+            target:
+              entity:
+              - {}
+        button_2_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
+        button_2_action_short:
+          name: Short Release Action
+          description: Action triggered by short pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_on
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_2_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_2_action_long:
+          name: Short Release Action
+          description: Action triggered by long pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_2_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_2_action_dim:
+          name: Dim Actions
+          description: Define if the default dimming behaviour should be used or
+            the actions which can be denined in the custom section below.
+          default: default
+          selector:
+            select:
+              options:
+              - label: Default (Dim Lights)
+                value: default
+              - label: Dim Scene Lights
+                value: scene
+              - label: Custom
+                value: custom
+              multiple: false
+              mode: dropdown
+              sort: false
+    button_2_custom:
+      name: Button 2 - Custom Actions
+      icon: mdi:numeric-2-circle-outline
+      collapsed: true
+      input:
+        button_2_short_custom:
+          name: Button 2 (Short Release)
+          description: Action to run when Button 3 is released after a short press
+          default: []
+          selector:
+            action: {}
+        button_2_long_custom:
+          name: Button 2 (Long Release)
+          default: []
+          description: Action to run when Button 3 is released after a long press
+          selector:
+            action: {}
+        button_2_small_rotation_max:
+          name: Small Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Small Rotation\".\nA rotation
+            event with a step size between 1 and this value (inclusively) \nwill cause
+            either the clockwise or counterclockwise \"small\" rotation action\nto
+            run\n"
+          default: 13
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        button_2_medium_rotation_max:
+          name: Medium Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Medium Rotation\".\nA rotation
+            event with a \"Step Size\" greater than the \"Small Rotation Maximum\",\nand
+            less than or equal to this value (inclusively) will cause either the\nclockwise
+            or counterclockwise \"medium\" rotation action to run\n\n** A rotation
+            event with a \"Step Size\" greater than this value will be treated \nas
+            a \"Large Rotation\" **\n"
+          default: 24
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        clockwise_rotation_small_2:
+          name: Clockwise Rotation - Small
+          description: Action to run when a small clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_medium_2:
+          name: Clockwise Rotation - Medium
+          description: Action to run when a medium clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_large_2:
+          name: Clockwise Rotation - Large
+          description: Action to run when a large clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_small_2:
+          name: Counterclockwise Rotation - Small
+          description: Action to run when a small counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_medium_2:
+          name: Counterclockwise Rotation - Medium
+          description: Action to run when a medium counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_large_2:
+          name: Counterclockwise Rotation - Large
+          description: Action to run when a large counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+    button_3_lights:
+      name: Button 3 - Lights
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_3_enities:
+          name: Lights
+          description: The light(s) to control with first button
+          default: {}
+          selector:
+            target:
+              entity:
+              - {}
+        button_3_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
+        button_3_action_short:
+          name: Short Release Action
+          description: Action triggered by short pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option.  custom action in the sction below that willoverwie 
+            this option. 
+          default: homeassistant.turn_on
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_3_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_3_action_long:
+          name: Long Release Action
+          description: Action triggered by long pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_3_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_3_action_dim:
+          name: Dim Actions
+          description: Define if the default dimming behaviour should be used or
+            the actions which can be denined in the custom section below.
+          default: default
+          selector:
+            select:
+              options:
+              - label: Default (Dim Lights)
+                value: default
+              - label: Dim Scene Lights
+                value: scene
+              - label: Custom
+                value: custom
+              multiple: false
+              mode: dropdown
+              sort: false
+    button_3_custom:
+      name: Button 3 - Custom Actions
+      icon: mdi:numeric-3-circle-outline
+      collapsed: true
+      input:
+        button_3_short_custom:
+          name: Button 3 (Short Release)
+          description: Action to run on a release of Button 3 after a short press
+          default: []
+          selector:
+            action: {}
+        button_3_long_custom:
+          name: Button 3 (Long Release)
+          description: Action to run when Button 3 is released after a long press
+          default: []
+          selector:
+            action: {}
+        button_3_small_rotation_max:
+          name: Small Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Small Rotation\".\nA rotation
+            event with a step size between 1 and this value (inclusively) \nwill cause
+            either the clockwise or counterclockwise \"small\" rotation action\nto
+            run\n"
+          default: 13
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        button_3_medium_rotation_max:
+          name: Medium Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Medium Rotation\".\nA rotation
+            event with a \"Step Size\" greater than the \"Small Rotation Maximum\",\nand
+            less than or equal to this value (inclusively) will cause either the\nclockwise
+            or counterclockwise \"medium\" rotation action to run\n\n** A rotation
+            event with a \"Step Size\" greater than this value will be treated \nas
+            a \"Large Rotation\" **\n"
+          default: 24
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        clockwise_rotation_small_3:
+          name: Clockwise Rotation - Small
+          description: Action to run when a small clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_medium_3:
+          name: Clockwise Rotation - Medium
+          description: Action to run when a medium clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_large_3:
+          name: Clockwise Rotation - Large
+          description: Action to run when a large clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_small_3:
+          name: Counterclockwise Rotation - Small
+          description: Action to run when a small counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_medium_3:
+          name: Counterclockwise Rotation - Medium
+          description: Action to run when a medium counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_large_3:
+          name: Counterclockwise Rotation - Large
+          description: Action to run when a large counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+    button_4_lights:
+      name: Button 4 - Lights
+      icon: mdi:lightbulb
+      collapsed: true
+      input:
+        button_4_enities:
+          name: Lights
+          description: The light(s) to control with first button
+          default: {}
+          selector:
+            target:
+              entity:
+              - {}
+        button_4_scene:
+          name: Scene
+          description: Single scene to be activated with the first button 
+            if the 'Scene Turn on' action is selected.
+          default: None
+          selector:
+            entity:
+              domain:
+              - scene
+              multiple: false
+        button_4_action_short:
+          name: Short Release Action
+          description: Action triggered by short pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_on
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_4_short_prevent_on_change:
+          name: Prevent Short Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_4_action_long:
+          name: Long Release Action
+          description: Action triggered by long pressing and releasing the button or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
+        button_4_long_prevent_on_change:
+          name: Prevent Long Release Action on change
+          description: If clicked and the active button (Current Light) changes, the 
+            action will not be fired on the first click if this option is enabled.
+          default: false
+          selector:
+            boolean:
+        button_4_action_dim:
+          name: Dim Actions
+          description: Define if the default dimming behaviour should be used or
+            the actions which can be denined in the custom section below.
+          default: default
+          selector:
+            select:
+              options:
+              - label: Default (Dim Lights)
+                value: default
+              - label: Dim Scene Lights
+                value: scene
+              - label: Custom
+                value: custom
+              multiple: false
+              mode: dropdown
+              sort: false
+    button_4_custom:
+      name: Button 4 - Custom Actions
+      icon: mdi:numeric-4-circle-outline
+      collapsed: true
+      input:
+        button_4_short_custom:
+          name: Button 4 (Short Release)
+          description: Action to run on a release of Button 3 after a short press
+          default: []
+          selector:
+            action: {}
+        button_4_long_custom:
+          name: Button 4 (Long Release)
+          description: Action to run when Button 3 is released after a long press
+          default: []
+          selector:
+            action: {}
+        button_4_small_rotation_max:
+          name: Small Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Small Rotation\".\nA rotation
+            event with a step size between 1 and this value (inclusively) \nwill cause
+            either the clockwise or counterclockwise \"small\" rotation action\nto
+            run\n"
+          default: 13
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        button_4_medium_rotation_max:
+          name: Medium Rotation Maximum
+          description: "The maximum \"Step Size\" of a \"Medium Rotation\".\nA rotation
+            event with a \"Step Size\" greater than the \"Small Rotation Maximum\",\nand
+            less than or equal to this value (inclusively) will cause either the\nclockwise
+            or counterclockwise \"medium\" rotation action to run\n\n** A rotation
+            event with a \"Step Size\" greater than this value will be treated \nas
+            a \"Large Rotation\" **\n"
+          default: 24
+          selector:
+            number:
+              min: 1.0
+              max: 100.0
+              step: 1.0
+              mode: box
+        clockwise_rotation_small_4:
+          name: Clockwise Rotation - Small
+          description: Action to run when a small clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_medium_4:
+          name: Clockwise Rotation - Medium
+          description: Action to run when a medium clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        clockwise_rotation_large_4:
+          name: Clockwise Rotation - Large
+          description: Action to run when a large clockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_small_4:
+          name: Counterclockwise Rotation - Small
+          description: Action to run when a small counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_medium_4:
+          name: Counterclockwise Rotation - Medium
+          description: Action to run when a medium counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+        counter_clockwise_rotation_large_4:
+          name: Counterclockwise Rotation - Large
+          description: Action to run when a large counterclockwise rotation occurs
+          default: []
+          selector:
+            action: {}
+  source_url: https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
+mode: restart
+max_exceeded: silent
+variables:
+  lights:
+    button_1: !input button_1_enities
+    button_2: !input button_2_enities
+    button_3: !input button_3_enities
+    button_4: !input button_4_enities
+  scenes:
+    button_1: !input button_1_scene
+    button_2: !input button_2_scene
+    button_3: !input button_3_scene
+    button_4: !input button_4_scene
+  actions_default:
+    press_release:
+      button_1: !input button_1_action_short
+      button_2: !input button_2_action_short
+      button_3: !input button_3_action_short
+      button_4: !input button_4_action_short
+    hold_release:
+      button_1: !input button_1_action_long
+      button_2: !input button_2_action_long
+      button_3: !input button_3_action_long
+      button_4: !input button_4_action_long
+  actions_custom:
+    press_release:
+      button_1: !input button_1_short_custom
+      button_2: !input button_2_short_custom
+      button_3: !input button_3_short_custom
+      button_4: !input button_4_short_custom
+    hold_release:
+      button_1: !input button_1_long_custom
+      button_2: !input button_2_long_custom
+      button_3: !input button_3_long_custom
+      button_4: !input button_4_long_custom
+  prevents_on_change:
+    press_release:
+      button_1: !input button_1_short_prevent_on_change
+      button_2: !input button_2_short_prevent_on_change
+      button_3: !input button_3_short_prevent_on_change
+      button_4: !input button_4_short_prevent_on_change
+    hold_release:
+      button_1: !input button_1_long_prevent_on_change
+      button_2: !input button_2_long_prevent_on_change
+      button_3: !input button_3_long_prevent_on_change
+      button_4: !input button_4_long_prevent_on_change
+  actions_dim:  
+    button_1: !input button_1_action_dim
+    button_2: !input button_2_action_dim
+    button_3: !input button_3_action_dim
+    button_4: !input button_4_action_dim
+  small_rotation_max:
+    button_1: !input button_1_small_rotation_max
+    button_2: !input button_2_small_rotation_max
+    button_3: !input button_3_small_rotation_max
+    button_4: !input button_4_small_rotation_max
+  medium_rotation_max:
+    button_1: !input button_1_medium_rotation_max
+    button_2: !input button_2_medium_rotation_max
+    button_3: !input button_3_medium_rotation_max
+    button_4: !input button_4_medium_rotation_max
+  dim_entities:
+    button_1:
+      entity_id: '{% if actions_dim["button_1"] == "scene" and scenes["button_1"] != None %}
+          {{ state_attr(scenes["button_1"], "entity_id") | default }}
+        {% else %}
+          {{ lights["button_1"]["entity_id"] | default }}
+        {% endif %}'
+    button_2:
+      entity_id: '{% if actions_dim["button_2"] == "scene" and scenes["button_2"] != None %}
+          {{ state_attr(scenes["button_2"], "entity_id") | default }}
+        {% else %}
+          {{ lights["button_2"]["entity_id"] | default }}
+        {% endif %}'
+    button_3:
+      entity_id: '{% if actions_dim["button_3"] == "scene" and scenes["button_3"] != None %}
+          {{ state_attr(scenes["button_3"], "entity_id") | default }}
+        {% else %}
+          {{ lights["button_3"]["entity_id"] | default }}
+        {% endif %}'
+    button_4:
+      entity_id: '{% if actions_dim["button_4"] == "scene" and scenes["button_4"] != None %}
+          {{ state_attr(scenes["button_4"], "entity_id") | default }}
+        {% else %}
+          {{ lights["button_4"]["entity_id"] | default }}
+        {% endif %}'
+      
+  current_light_helper: !input current_light_helper
+  dim_scale: !input dim_scale
+
+trigger:
+  - platform: mqtt
+    topic: !input mqtt_topic
+
+condition:
+  - condition: template
+    value_template: '{{ trigger.payload_json.action != "" }}'
+action:
+- variables:
+    selected_light: none
+    action: '{{ trigger.payload_json.action }}'
+    last_button: '{{ states(current_light_helper) }}'
+- service: logbook.log
+  data:
+    name: dial1
+    message: >
+      trigger.payload_json: {{ trigger.payload_json }}
+#
+# Buttons 
+#
+- choose:
+  - conditions: '{{ trigger.payload_json.action is match(find="^button_[1-4]") }}'
+    sequence:
+    - variables:
+        action_regex: '{{ trigger.payload_json.action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}'
+        #button: '{{ action_regex[0] | string }}' 
+        button: '{% if action_regex[0] == "button_1" %}
+            {{ "button_1" }}
+          {% elif action_regex[0] == "button_2" %}
+            {{ "button_2" }}
+          {% elif action_regex[0] == "button_3" %}
+            {{ "button_3" }}
+          {% elif action_regex[0] == "button_4" %}
+            {{ "button_4" }}
+          {% endif %}'
+        button_changed: '{{ last_button != button }}'
+        press_type: '{% if action_regex[1] == "press_release" %}
+            {{ "press_release" }}
+          {% elif action_regex[1] == "hold_release" %}
+            {{ "hold_release" }}
+          {% endif %}'
+        action_default_buttons: '{{ actions_default[press_type] | default}}'
+        action_default: '{{ action_default_buttons[button] | default }}'
+        use_default: '{{ action_default != None }}'
+        prevent_on_change_buttons: '{{ prevents_on_change[press_type] | default}}'
+        prevent_on_change: '{{ prevent_on_change_buttons[button] == "True" and button_changed }}'
+        use_custom_buttons: '{{ actions_custom[press_type] | default }}'
+        use_custom: '{{ use_custom_buttons[button] != [] }}'
+    - service: logbook.log
+      data:
+        name: dial1
+        message: >
+          action: {{ action }},
+          press_type: {{ press_type }},
+          action_default: {{ action_default}},
+          prevent_on_change: {{ prevent_on_change }},
+          use_default: {{ use_default }},
+          use_custom: {{ use_custom }},
+          button: {{ button }},
+          last_button: {{ last_button }},
+          button_changed: {{ button_changed }}
+        
+    - choose:
+      - conditions: '{{ use_default and not prevent_on_change and action_default == "homeassistant.turn_on"}}'
+        sequence:
+          - service: homeassistant.turn_on
+            target: '{{ lights[button] }}'
+      - conditions: '{{ use_default and not prevent_on_change and action_default == "homeassistant.turn_off"}}'
+        sequence:
+          - service: homeassistant.turn_off
+            target: '{{ lights[button] }}'
+      - conditions: '{{ use_default and not prevent_on_change and scenes[button] != "None" and action_default == "scene.turn_on"}}'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: '{{ scenes[button] }}'
+    - choose:
+      - conditions: '{{ press_type == "press_release" and use_custom and not prevent_on_change }}'
+        sequence:
+        - choose:
+          - conditions: '{{ button == "button_1" }}'
+            sequence: !input button_1_short_custom
+          - conditions: '{{ button == "button_2" }}'
+            sequence: !input button_2_short_custom
+          - conditions: '{{ button == "button_3" }}'
+            sequence: !input button_3_short_custom
+          - conditions: '{{ button == "button_4" }}'
+            sequence: !input button_4_short_custom
+      - conditions: '{{ press_type == "hold_release" and use_custom and not prevent_on_change }}'
+        sequence:
+        - choose:
+          - conditions: '{{ button == "button_1" }}'
+            sequence: !input button_1_long_custom
+          - conditions: '{{ button == "button_2" }}'
+            sequence: !input button_2_long_custom
+          - conditions: '{{ button == "button_3" }}'
+            sequence: !input button_3_long_custom
+          - conditions: '{{ button == "button_4" }}'
+            sequence: !input button_4_long_custom
+    # Set current button to helper variable              
+    - service: input_text.set_value
+      target:
+        entity_id: !input current_light_helper
+      data:
+        value: '{{ button }}'
+#
+# Rotation
+#
+  - conditions: '{{ trigger.payload_json.action is match(find="^brightness_step") }}'
+    sequence:
+    - variables:
+        command: '{{ action }}'
+        step_size: '{{trigger.payload_json.action_step_size}}'
+        small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
+        medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
+        step_size_name: "{% if step_size <= small_rotation_max_button %}\n  {{ \"Small\"
+          }}\n{% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\" }}\n{%
+          else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
+    - service: logbook.log
+      data:
+        name: dial1
+        message: >
+          command: {{ command }},
+          step_size: {{ step_size }}
+    - choose:
+      - conditions:
+        - '{{ command == "brightness_step_up" }}'
+        sequence:
+        - choose:
+          - conditions:
+            - or:
+              - '{{ lights[last_button] == {} }}'
+              - '{{ actions_dim[last_button] == "custom" }}'
+            sequence:
+            - choose:
+              - conditions: '{{ last_button == "button_1" and step_size_name == "Small" }}'
+                sequence: !input clockwise_rotation_small_1
+              - conditions: '{{ last_button == "button_2" and step_size_name == "Small" }}'
+                sequence: !input clockwise_rotation_small_2
+              - conditions: '{{ last_button == "button_3" and step_size_name == "Small" }}'
+                sequence: !input clockwise_rotation_small_3
+              - conditions: '{{ last_button == "button_4" and step_size_name == "Small" }}'
+                sequence: !input clockwise_rotation_small_4
+              - conditions: '{{ last_button == "button_1" and step_size_name == "Medium" }}'
+                sequence: !input clockwise_rotation_medium_1
+              - conditions: '{{ last_button == "button_2" and step_size_name == "Medium" }}'
+                sequence: !input clockwise_rotation_medium_2
+              - conditions: '{{ last_button == "button_3" and step_size_name == "Medium" }}'
+                sequence: !input clockwise_rotation_medium_3
+              - conditions: '{{ last_button == "button_4" and step_size_name == "Medium" }}'
+                sequence: !input clockwise_rotation_medium_4
+              - conditions: '{{ last_button == "button_1" and step_size_name == "Large" }}'
+                sequence: !input clockwise_rotation_large_1
+              - conditions: '{{ last_button == "button_2" and step_size_name == "Large" }}'
+                sequence: !input clockwise_rotation_large_3
+              - conditions: '{{ last_button == "button_3" and tep_size_name == "Large" }}'
+                sequence: !input clockwise_rotation_large_3
+              - conditions: '{{ last_button == "button_4" and step_size_name == "Large" }}'
+                sequence: !input clockwise_rotation_large_4
+          - conditions: '{{ current_light_helper != none }}'
+            sequence:
+            - service: light.turn_on
+              target: '{{ dim_entities[last_button] }}'
+              data:
+                brightness_step_pct: '{{ step_size * dim_scale }}'
+                transition: 1
+          default:
+          - service: light.turn_on
+            target: '{{ lights["button_1"] }}'
+            data:
+              brightness_step_pct: '{{ step_size * dim_scale }}'
+              transition: 1
+      - conditions:
+        - '{{ command == "brightness_step_down" }}'
+        sequence:
+        - choose:
+          - conditions:
+            - or:
+              - '{{ lights[last_button] == {} }}'
+              - '{{ actions_dim[last_button] == "custom" }}'
+            sequence:
+            - choose:
+              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name == "Small" }}'
+                sequence: !input counter_clockwise_rotation_small_1
+              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name == "Small" }}'
+                sequence: !input counter_clockwise_rotation_small_2
+              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name == "Small" }}'
+                sequence: !input counter_clockwise_rotation_small_3
+              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name == "Small" }}'
+                sequence: !input counter_clockwise_rotation_small_4
+              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name == "Medium" }}'
+                sequence: !input counter_clockwise_rotation_medium_1
+              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name == "Medium" }}'
+                sequence: !input counter_clockwise_rotation_medium_2
+              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name == "Medium" }}'
+                sequence: !input counter_clockwise_rotation_medium_3
+              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name == "Medium" }}'
+                sequence: !input counter_clockwise_rotation_medium_4
+              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name == "Large" }}'
+                sequence: !input counter_clockwise_rotation_large_1
+              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name == "Large" }}'
+                sequence: !input counter_clockwise_rotation_large_3
+              - conditions: '{{ states(current_light_helper) == "button_3" and tep_size_name == "Large" }}'
+                sequence: !input counter_clockwise_rotation_large_3
+              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name == "Large" }}'
+                sequence: !input counter_clockwise_rotation_large_4
+          - conditions:
+            - '{{ current_light_helper != none }}'
+            - '{{ step_size != 255 }}'
+            sequence:
+            - service: light.turn_on
+              target: '{{ dim_entities[last_button] }}'
+              data:
+                brightness_step_pct: '{{ -step_size * dim_scale }}'
+                transition: 1
