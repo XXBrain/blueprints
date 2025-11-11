@@ -1,0 +1,113 @@
+alias: Double click trigger
+name: Philips Tap Dial Switch Double Click Trigger (Z2M)
+description: Waits for double click event for .5s
+triggers:
+  - topic: zigbee2mqtt/Hue Tap Dial1/action
+    id: button_1_press_release
+    payload: button_1_press_release
+    trigger: mqtt
+  - topic: zigbee2mqtt/Hue Tap Dial1/action
+    id: button_2_press_release
+    payload: button_2_press_release
+    trigger: mqtt
+  - topic: zigbee2mqtt/Hue Tap Dial1/action
+    id: button_3_press_release
+    payload: button_3_press_release
+    trigger: mqtt
+  - topic: zigbee2mqtt/Hue Tap Dial1/action
+    id: button_4_press_release
+    payload: button_4_press_release
+    trigger: mqtt
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - button_1_press_release
+        sequence:
+          - wait_for_trigger:
+              - topic: zigbee2mqtt/Hue Tap Dial1/action
+                payload: button_1_press
+                trigger: mqtt
+            timeout:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+            continue_on_timeout: false
+          - data:
+              qos: 0
+              retain: false
+              topic: zigbee2mqtt/Hue Tap Dial1
+              payload: >-
+                {"action":"button_1_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
+            action: mqtt.publish
+      - conditions:
+          - condition: trigger
+            id:
+              - button_2_press_release
+        sequence:
+          - wait_for_trigger:
+              - topic: zigbee2mqtt/Hue Tap Dial1/action
+                payload: button_2_press
+                trigger: mqtt
+            timeout:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+            continue_on_timeout: false
+          - data:
+              qos: 0
+              retain: false
+              topic: zigbee2mqtt/Hue Tap Dial1
+              payload: >-
+                {"action":"button_2_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
+            action: mqtt.publish
+      - conditions:
+          - condition: trigger
+            id:
+              - button_3_press_release
+        sequence:
+          - wait_for_trigger:
+              - topic: zigbee2mqtt/Hue Tap Dial1/action
+                payload: button_3_press
+                trigger: mqtt
+            timeout:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+            continue_on_timeout: false
+          - data:
+              qos: 0
+              retain: false
+              topic: zigbee2mqtt/Hue Tap Dial1
+              payload: >-
+                {"action":"button_3_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
+            action: mqtt.publish
+      - conditions:
+          - condition: trigger
+            id:
+              - button_4_press_release
+        sequence:
+          - wait_for_trigger:
+              - topic: zigbee2mqtt/Hue Tap Dial1/action
+                payload: button_4_press
+                trigger: mqtt
+            timeout:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+            continue_on_timeout: false
+          - data:
+              qos: 0
+              retain: false
+              topic: zigbee2mqtt/Hue Tap Dial1
+              payload: >-
+                {"action":"button_4_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
+            action: mqtt.publish
+mode: single
+max_exceeded: silent
