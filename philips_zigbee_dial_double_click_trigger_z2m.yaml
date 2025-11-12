@@ -1,113 +1,44 @@
 blueprint:
-  name: Philips Tap Dial Switch Double Click Trigger (Z2M)
-  description: Waits for double click event for .5s
-  triggers:
-    - topic: zigbee2mqtt/Hue Tap Dial1/action
-      id: button_1_press_release
-      payload: button_1_press_release
-      trigger: mqtt
-    - topic: zigbee2mqtt/Hue Tap Dial1/action
-      id: button_2_press_release
-      payload: button_2_press_release
-      trigger: mqtt
-    - topic: zigbee2mqtt/Hue Tap Dial1/action
-      id: button_3_press_release
-      payload: button_3_press_release
-      trigger: mqtt
-    - topic: zigbee2mqtt/Hue Tap Dial1/action
-      id: button_4_press_release
-      payload: button_4_press_release
-      trigger: mqtt
-  conditions: []
-  actions:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id:
-                - button_1_press_release
-          sequence:
-            - wait_for_trigger:
-                - topic: zigbee2mqtt/Hue Tap Dial1/action
-                  payload: button_1_press
-                  trigger: mqtt
-              timeout:
-                hours: 0
-                minutes: 0
-                seconds: 0
-                milliseconds: 500
-              continue_on_timeout: false
-            - data:
-                qos: 0
-                retain: false
-                topic: zigbee2mqtt/Hue Tap Dial1
-                payload: >-
-                  {"action":"button_1_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
-              action: mqtt.publish
-        - conditions:
-            - condition: trigger
-              id:
-                - button_2_press_release
-          sequence:
-            - wait_for_trigger:
-                - topic: zigbee2mqtt/Hue Tap Dial1/action
-                  payload: button_2_press
-                  trigger: mqtt
-              timeout:
-                hours: 0
-                minutes: 0
-                seconds: 0
-                milliseconds: 500
-              continue_on_timeout: false
-            - data:
-                qos: 0
-                retain: false
-                topic: zigbee2mqtt/Hue Tap Dial1
-                payload: >-
-                  {"action":"button_2_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
-              action: mqtt.publish
-        - conditions:
-            - condition: trigger
-              id:
-                - button_3_press_release
-          sequence:
-            - wait_for_trigger:
-                - topic: zigbee2mqtt/Hue Tap Dial1/action
-                  payload: button_3_press
-                  trigger: mqtt
-              timeout:
-                hours: 0
-                minutes: 0
-                seconds: 0
-                milliseconds: 500
-              continue_on_timeout: false
-            - data:
-                qos: 0
-                retain: false
-                topic: zigbee2mqtt/Hue Tap Dial1
-                payload: >-
-                  {"action":"button_3_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
-              action: mqtt.publish
-        - conditions:
-            - condition: trigger
-              id:
-                - button_4_press_release
-          sequence:
-            - wait_for_trigger:
-                - topic: zigbee2mqtt/Hue Tap Dial1/action
-                  payload: button_4_press
-                  trigger: mqtt
-              timeout:
-                hours: 0
-                minutes: 0
-                seconds: 0
-                milliseconds: 500
-              continue_on_timeout: false
-            - data:
-                qos: 0
-                retain: false
-                topic: zigbee2mqtt/Hue Tap Dial1
-                payload: >-
-                  {"action":"button_4_double","action_direction":null,"action_time":null,"action_type":null,"battery":null,"update":{"installed_version":null,"latest_version":null,"state":null},"update_available":null}
-              action: mqtt.publish
-  mode: single
-  max_exceeded: silent
+  name: Test (Z2M)
+  description: 'Control lights with a Philips Hue Tap Switch. Use the four buttons
+    to control up to four light(s) with an on, off or toggle or custom actions.
+    Supports short release and long release each beheaviour can 
+    configured seperatly.
+    The dial can be used to dim the most recently used lights or call a custom 
+    rotation action for that button.
+    based on 
+    apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
+    gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af'
+  domain: automation
+  input:
+    mqtt_topic:
+      name: MQTT Topic
+      description: Topic of the Philips Hue Tap Dial Switch
+      default: zigbee2mqtt/<device name>
+    double_press_helper:
+      name: (OPTIONAL) Double Press Helper
+      description: Boolean helper to detect double press actions. 
+      default:
+      selector:
+        entity:
+          domain:
+          - input_boolean
+          multiple: false
+mode: restart
+max_exceeded: silent
+variables:
+  mqtt_topic: !input mqtt_topic
+  current_light_helper: !input current_light_helper
+  
+triggers:
+  - topic: !input mqtt_topic
+    platform: mqtt
+    id: dial-tab_01
+condition:
+  - condition: template
+    value_template: '{{ trigger.payload_json.action != "" }}'
+action:
+- variables:
+    selected_light: none
+    action: '{{ trigger.payload_json.action }}'
+    last_button: '{{ states(current_light_helper) }}'
