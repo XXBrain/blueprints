@@ -28,7 +28,7 @@ mode: restart
 max_exceeded: silent
 variables:
   mqtt_topic: !input mqtt_topic
-  current_light_helper: !input current_light_helper
+  double_press_helper: !input double_press_helper
   
 triggers:
   - topic: !input mqtt_topic
@@ -39,6 +39,4 @@ condition:
     value_template: '{{ trigger.payload_json.action != "" }}'
 action:
 - variables:
-    selected_light: none
     action: '{{ trigger.payload_json.action }}'
-    last_button: '{{ states(current_light_helper) }}'
