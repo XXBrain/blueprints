@@ -1,8 +1,10 @@
 blueprint:
   name: Philips Tap Dial Switch 4 Lights or Custom (Z2M)
-  description: Control lights with a Philips Hue Tap Switch. Use the four buttons
-    to control up to four light(s) with an on, off or toggle or custom actions. Supports
-    short release, long release and double press. Each beheaviour can configured seperatly. 
+  description: Control lights, scenes and custom actions with a Philips Hue Tap Switch. 
+    Use the four buttons to control light(s) with an on/off or toggle command,
+    activate scnenes and/or run custom actions. 
+    This blueprint supports short release, hold release and double press mqtt actions.
+    Each beheaviour can configured seperatly. 
     The dial can be used to dim the most recently used lights or call a custom rotation action.
     for that button. based on apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
     gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af
