@@ -1079,7 +1079,7 @@ action:
             {{ "button_4" }}
           {% endif %}'
         button_changed: '{{ last_button != button }}'
-        is_double: '{{ is_state("input_boolean.wz_dialtap_01_double", "on") }}'
+        is_double: '{{ is_state(double_press_helper, "on") }}'
         press_type: '{% if is_double %}
             {{ "double_press" }}
           {% elif action_regex[1] == "press_release" %}
