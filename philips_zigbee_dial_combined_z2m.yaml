@@ -1,14 +1,11 @@
 blueprint:
   name: Philips Tap Dial Switch 4 Lights or Custom (Z2M)
-  description: 'Control lights with a Philips Hue Tap Switch. Use the four buttons
-    to control up to four light(s) with an on, off or toggle or custom actions.
-    Supports short release and long release each beheaviour can 
-    configured seperatly.
-    The dial can be used to dim the most recently used lights or call a custom 
-    rotation action for that button.
-    based on 
-    apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
-    gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af'
+  description: Control lights with a Philips Hue Tap Switch. Use the four buttons
+    to control up to four light(s) with an on, off or toggle or custom actions. Supports
+    short release, long release and double press. Each beheaviour can configured seperatly. 
+    The dial can be used to dim the most recently used lights or call a custom rotation action.
+    for that button. based on apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
+    gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af
   domain: automation
   input:
     mqtt_topic:
@@ -16,15 +13,25 @@ blueprint:
       description: Topic of the Philips Hue Tap Dial Switch
       default: zigbee2mqtt/<device name>
     current_light_helper:
-      name: (OPTIONAL) Current Light
-      description: Text helper to track the current light for dimming and actions. Set for the dimmer
-        controls and action configuration to change which light they are controlling according to the last
-        one turned on.
+      name: Current Light Helper
+      description: Text helper to track the current button for rotate actions. Set for the dimmer
+        controls and action configuration to change which lights etc. they are controlling according to the last
+        pressed button.
       default:
       selector:
         entity:
           domain:
           - input_text
+          multiple: false
+    double_press_helper:
+      name: Double Press Helper
+      description: A boolean helper to detect double press actions. 
+        This is required because z2m does support this natively.
+      default:
+      selector:
+        entity:
+          domain:
+          - input_boolean
           multiple: false
     dim_scale:
       name: Diming Scale
@@ -144,6 +151,31 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+        button_1_action_double:
+          name: Double Press Action
+          description: Action triggered by pressing and releasing the button twice or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
     button_1_custom:
       name: Button 1 - Custom Actions
       icon: mdi:numeric-1-circle-outline
@@ -158,6 +190,12 @@ blueprint:
         button_1_long_custom:
           name: Button 1 (Long Release)
           description: Action to run when Button 3 is released after a long press
+          default: []
+          selector:
+            action: {}
+        button_1_double_custom:
+          name: Button 3 (Double Press)
+          description: Action to run when Button 3 is pressed twice
           default: []
           selector:
             action: {}
@@ -329,6 +367,31 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+        button_2_action_double:
+          name: Double Press Action
+          description: Action triggered by pressing and releasing the button twice or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
     button_2_custom:
       name: Button 2 - Custom Actions
       icon: mdi:numeric-2-circle-outline
@@ -344,6 +407,12 @@ blueprint:
           name: Button 2 (Long Release)
           default: []
           description: Action to run when Button 3 is released after a long press
+          selector:
+            action: {}
+        button_2_double_custom:
+          name: Button 3 (Double Press)
+          description: Action to run when Button 3 is pressed twice
+          default: []
           selector:
             action: {}
         button_2_small_rotation_max:
@@ -498,6 +567,31 @@ blueprint:
           default: false
           selector:
             boolean:
+        button_3_action_double:
+          name: Double Press Action
+          description: Action triggered by pressing and releasing the button twice or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
         button_3_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or
@@ -529,6 +623,12 @@ blueprint:
         button_3_long_custom:
           name: Button 3 (Long Release)
           description: Action to run when Button 3 is released after a long press
+          default: []
+          selector:
+            action: {}
+        button_3_double_custom:
+          name: Button 3 (Double Press)
+          description: Action to run when Button 3 is pressed twice
           default: []
           selector:
             action: {}
@@ -700,6 +800,31 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+        button_4_action_double:
+          name: Double Press Action
+          description: Action triggered by pressing and releasing the button twice or 
+            type in any other service that is called with the lights entity ids
+            as target.
+            You can also define a custom action in the section below that will overwrite 
+            this option. 
+          default: homeassistant.turn_off
+          selector:
+            select:
+              options:
+              - label: Turn On
+                value: homeassistant.turn_on
+              - label: Turn Off
+                value: homeassistant.turn_off
+              - label: Toggle
+                value: homeassistant.toggle
+              - label: Scene Turn On
+                value: scene.turn_on
+              - label: None
+                value: None
+              multiple: false
+              mode: dropdown
+              custom_value: true
+              sort: false
     button_4_custom:
       name: Button 4 - Custom Actions
       icon: mdi:numeric-4-circle-outline
@@ -714,6 +839,12 @@ blueprint:
         button_4_long_custom:
           name: Button 4 (Long Release)
           description: Action to run when Button 3 is released after a long press
+          default: []
+          selector:
+            action: {}
+        button_4_double_custom:
+          name: Button 3 (Double Press)
+          description: Action to run when Button 3 is pressed twice
           default: []
           selector:
             action: {}
@@ -782,7 +913,7 @@ blueprint:
           selector:
             action: {}
   source_url: https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
-mode: restart
+mode: single
 max_exceeded: silent
 variables:
   lights:
@@ -806,6 +937,11 @@ variables:
       button_2: !input button_2_action_long
       button_3: !input button_3_action_long
       button_4: !input button_4_action_long
+    double_press:
+      button_1: !input button_1_action_double
+      button_2: !input button_2_action_double
+      button_3: !input button_3_action_double
+      button_4: !input button_4_action_double
   actions_custom:
     press_release:
       button_1: !input button_1_short_custom
@@ -817,6 +953,11 @@ variables:
       button_2: !input button_2_long_custom
       button_3: !input button_3_long_custom
       button_4: !input button_4_long_custom
+    double_press:
+      button_1: !input button_1_double_custom
+      button_2: !input button_2_double_custom
+      button_3: !input button_3_double_custom
+      button_4: !input button_3_double_custom
   prevents_on_change:
     press_release:
       button_1: !input button_1_short_prevent_on_change
@@ -868,27 +1009,57 @@ variables:
         {% else %}
           {{ lights["button_4"]["entity_id"] | default }}
         {% endif %}'
-      
+  mqtt_topic: !input mqtt_topic
+  mqtt_topic_action: '{{ mqtt_topic + "/action" }}'      
   current_light_helper: !input current_light_helper
+  double_press_helper: !input double_press_helper
   dim_scale: !input dim_scale
 
-trigger:
-  - platform: mqtt
-    topic: !input mqtt_topic
+triggers:
+  - topic: !input mqtt_topic
+    platform: mqtt
+    id: dial-tab_01
 
 condition:
   - condition: template
-    value_template: '{{ trigger.payload_json.action != "" }}'
+    value_template: '{{ trigger.payload_json.action in 
+    ["button_1_press_release","button_2_press_release",
+    "button_3_press_release","button_4_press_release",
+    "button_1_hold_release","button_2_hold_release",
+    "button_3_hold_release","button_4_hold_release",
+    "brightness_step_up","brightness_step_down"]  }}'
 action:
 - variables:
     selected_light: none
     action: '{{ trigger.payload_json.action }}'
     last_button: '{{ states(current_light_helper) }}'
-- service: logbook.log
-  data:
-    name: dial1
-    message: >
-      trigger.payload_json: {{ trigger.payload_json }}
+## double press detection start ##
+- choose:
+  - conditions: '{{ trigger.payload_json.action is match(find="^button_[1-4]") }}'
+    sequence:
+    - wait_for_trigger:
+        - topic: '{{ mqtt_topic + "/action" }}' 
+          payload: '{{ trigger.payload_json.action }}'
+          trigger: mqtt
+      timeout:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
+      continue_on_timeout: true
+    - if:
+        - condition: template
+          value_template: "{{ wait.trigger != None }}"
+      then:
+        - action: input_boolean.turn_on
+          target:
+            entity_id: '{{ double_press_helper }}'
+## double press detection end ##
+#- service: logbook.log
+#  data:
+#    name: dial1
+#    message: >
+#        trigger.payload_json: {{ trigger.payload_json }}
 #
 # Buttons 
 #
@@ -908,32 +1079,39 @@ action:
             {{ "button_4" }}
           {% endif %}'
         button_changed: '{{ last_button != button }}'
-        press_type: '{% if action_regex[1] == "press_release" %}
+        is_double: '{{ is_state("input_boolean.wz_dialtap_01_double", "on") }}'
+        press_type: '{% if is_double %}
+            {{ "double_press" }}
+          {% elif action_regex[1] == "press_release" %}
             {{ "press_release" }}
           {% elif action_regex[1] == "hold_release" %}
             {{ "hold_release" }}
           {% endif %}'
-        action_default_buttons: '{{ actions_default[press_type] | default}}'
-        action_default: '{{ action_default_buttons[button] | default }}'
-        use_default: '{{ action_default != None }}'
+        actions_default_buttons: '{{ actions_default[press_type] | default}}'
+        actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
+        action_default: '{{ actions_default_buttons[button] | default }}'
         prevent_on_change_buttons: '{{ prevents_on_change[press_type] | default}}'
         prevent_on_change: '{{ prevent_on_change_buttons[button] == "True" and button_changed }}'
-        use_custom_buttons: '{{ actions_custom[press_type] | default }}'
-        use_custom: '{{ use_custom_buttons[button] != [] }}'
-    - service: logbook.log
-      data:
-        name: dial1
-        message: >
-          action: {{ action }},
-          press_type: {{ press_type }},
-          action_default: {{ action_default}},
-          prevent_on_change: {{ prevent_on_change }},
-          use_default: {{ use_default }},
-          use_custom: {{ use_custom }},
-          button: {{ button }},
-          last_button: {{ last_button }},
-          button_changed: {{ button_changed }}
-        
+        use_default: '{{ action_default != None }}'
+        use_custom: '{{ actions_custom_buttons[button] != [] }}'
+    # Reset double press helper
+    - action: input_boolean.turn_off
+      target:
+        entity_id: '{{ double_press_helper }}'
+#    - service: logbook.log
+#      data:
+#        name: dial1
+#        message: >
+#          action: {{ action }},
+#          press_type: {{ press_type }},
+#          action_default: {{ action_default}},
+#          prevent_on_change: {{ prevent_on_change }},
+#          use_default: {{ use_default }},
+#          use_custom: {{ use_custom }},
+#          button: {{ button }},
+#          last_button: {{ last_button }},
+#          button_changed: {{ button_changed }},
+#          action_custom: '{{ actions_custom_buttons[button] }}'        
     - choose:
       - conditions: '{{ use_default and not prevent_on_change and action_default == "homeassistant.turn_on"}}'
         sequence:
@@ -971,6 +1149,17 @@ action:
             sequence: !input button_3_long_custom
           - conditions: '{{ button == "button_4" }}'
             sequence: !input button_4_long_custom
+      - conditions: '{{ press_type == "double_press" and use_custom }}'
+        sequence:
+        - choose:
+          - conditions: '{{ button == "button_1" }}'
+            sequence: !input button_1_double_custom
+          - conditions: '{{ button == "button_2" }}'
+            sequence: !input button_2_double_custom
+          - conditions: '{{ button == "button_3" }}'
+            sequence: !input button_3_double_custom
+          - conditions: '{{ button == "button_4" }}'
+            sequence: !input button_4_double_custom
     # Set current button to helper variable              
     - service: input_text.set_value
       target:
@@ -990,12 +1179,12 @@ action:
         step_size_name: "{% if step_size <= small_rotation_max_button %}\n  {{ \"Small\"
           }}\n{% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\" }}\n{%
           else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
-    - service: logbook.log
-      data:
-        name: dial1
-        message: >
-          command: {{ command }},
-          step_size: {{ step_size }}
+#    - service: logbook.log
+#      data:
+#        name: dial1
+#        message: >
+#          command: {{ command }},
+#          step_size: {{ step_size }}
     - choose:
       - conditions:
         - '{{ command == "brightness_step_up" }}'
