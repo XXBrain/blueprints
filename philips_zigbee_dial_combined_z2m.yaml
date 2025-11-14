@@ -1079,6 +1079,11 @@ action:
         sequence:
         - service: homeassistant.turn_off
           target: '{{ lights[button] }}'
+      - conditions: '{{ use_default and not prevent_on_change and action_default ==
+          "homeassistant.toggle"}}'
+        sequence:
+        - service: homeassistant.toggle
+          target: '{{ lights[button] }}'
       - conditions: '{{ use_default and not prevent_on_change and scenes[button] !=
           "None" and action_default == "scene.turn_on"}}'
         sequence:
