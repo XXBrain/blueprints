@@ -1,12 +1,11 @@
 blueprint:
   name: Philips Tap Dial Switch 4 Lights or Custom (Z2M)
-  description: Control lights, scenes and custom actions with a Philips Hue Tap Switch. 
-    Use the four buttons to control light(s) with an on/off or toggle command,
-    activate scnenes and/or run custom actions. 
-    This blueprint supports short release, hold release and double press mqtt actions.
-    Each beheaviour can configured seperatly. 
-    The dial can be used to dim the most recently used lights or call a custom rotation action.
-    for that button. based on apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
+  description: Control lights, scenes and custom actions with a Philips Hue Tap Switch.
+    Use the four buttons to control light(s) with an on/off or toggle command, activate
+    scnenes and/or run custom actions. This blueprint supports short release, hold
+    release and double press mqtt actions. Each beheaviour can configured seperatly.
+    The dial can be used to dim the most recently used lights or call a custom rotation
+    action. for that button. based on apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
     gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af
   domain: automation
   input:
@@ -16,25 +15,27 @@ blueprint:
       default: zigbee2mqtt/<device name>
     current_light_helper:
       name: Current Light Helper
-      description: Text helper to track the current button for rotate actions. Set for the dimmer
-        controls and action configuration to change which lights etc. they are controlling according to the last
-        pressed button.
+      description: Text helper to track the current button for rotate actions. Set
+        for the dimmer controls and action configuration to change which lights etc.
+        they are controlling according to the last pressed button.
       default:
       selector:
         entity:
           domain:
           - input_text
           multiple: false
+          reorder: false
     double_press_helper:
       name: Double Press Helper
-      description: A boolean helper to detect double press actions. 
-        This is required because z2m does support this natively.
+      description: A boolean helper to detect double press actions. This is required
+        because z2m does support this natively.
       default:
       selector:
         entity:
           domain:
           - input_boolean
           multiple: false
+          reorder: false
     dim_scale:
       name: Diming Scale
       description: Scale factor for the dimming. This value will be multiplied by
@@ -62,21 +63,21 @@ blueprint:
               - {}
         button_1_scene:
           name: Scene
-          description: Single scene to be activated with the first button 
-            if the 'Scene Turn on' action is selected.
+          description: Single scene to be activated with the first button if the 'Scene
+            Turn on' action is selected.
           default: None
           selector:
             entity:
               domain:
               - scene
               multiple: false
+              reorder: false
         button_1_action_short:
           name: Short Release Action
-          description: Action triggered by short pressing and releasing the button or 
-            type in any other service that is called with the selected lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by short pressing and releasing the button
+            or type in any other service that is called with the selected lights entity
+            ids as target. You can also define a custom action in the section below
+            that will overwrite this option.
           default: homeassistant.turn_on
           selector:
             select:
@@ -97,18 +98,17 @@ blueprint:
               sort: false
         button_1_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_1_action_long:
           name: Long Release Action
-          description: Action triggered by long pressing and releasing the button or 
-            type in any other service that is called with the selected lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option.  
+          description: Action triggered by long pressing and releasing the button
+            or type in any other service that is called with the selected lights entity
+            ids as target. You can also define a custom action in the section below
+            that will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -129,15 +129,15 @@ blueprint:
               sort: false
         button_1_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_1_action_dim:
           name: Dim Actions
-          description: Define if the default dimming behaviour should be used or
-            the actions which can be denined in the custom section below.
+          description: Define if the default dimming behaviour should be used or the
+            actions which can be denined in the custom section below.
           default: default
           selector:
             select:
@@ -153,13 +153,13 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+              custom_value: false
         button_1_action_double:
           name: Double Press Action
-          description: Action triggered by pressing and releasing the button twice or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by pressing and releasing the button twice
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -280,21 +280,21 @@ blueprint:
               - {}
         button_2_scene:
           name: Scene
-          description: Single scene to be activated with the first button 
-            if the 'Scene Turn on' action is selected.
+          description: Single scene to be activated with the first button if the 'Scene
+            Turn on' action is selected.
           default: None
           selector:
             entity:
               domain:
               - scene
               multiple: false
+              reorder: false
         button_2_action_short:
           name: Short Release Action
-          description: Action triggered by short pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by short pressing and releasing the button
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_on
           selector:
             select:
@@ -315,18 +315,17 @@ blueprint:
               sort: false
         button_2_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_2_action_long:
           name: Short Release Action
-          description: Action triggered by long pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by long pressing and releasing the button
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -347,15 +346,15 @@ blueprint:
               sort: false
         button_2_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_2_action_dim:
           name: Dim Actions
-          description: Define if the default dimming behaviour should be used or
-            the actions which can be denined in the custom section below.
+          description: Define if the default dimming behaviour should be used or the
+            actions which can be denined in the custom section below.
           default: default
           selector:
             select:
@@ -369,13 +368,13 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+              custom_value: false
         button_2_action_double:
           name: Double Press Action
-          description: Action triggered by pressing and releasing the button twice or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by pressing and releasing the button twice
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -496,22 +495,22 @@ blueprint:
               - {}
         button_3_scene:
           name: Scene
-          description: Single scene to be activated with the first button 
-            if the 'Scene Turn on' action is selected.
+          description: Single scene to be activated with the first button if the 'Scene
+            Turn on' action is selected.
           default: None
           selector:
             entity:
               domain:
               - scene
               multiple: false
+              reorder: false
         button_3_action_short:
           name: Short Release Action
-          description: Action triggered by short pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option.  custom action in the sction below that willoverwie 
-            this option. 
+          description: Action triggered by short pressing and releasing the button
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.  custom action in the sction below that willoverwie
+            this option.
           default: homeassistant.turn_on
           selector:
             select:
@@ -532,18 +531,17 @@ blueprint:
               sort: false
         button_3_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_3_action_long:
           name: Long Release Action
-          description: Action triggered by long pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by long pressing and releasing the button
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -564,18 +562,17 @@ blueprint:
               sort: false
         button_3_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_3_action_double:
           name: Double Press Action
-          description: Action triggered by pressing and releasing the button twice or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by pressing and releasing the button twice
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -596,8 +593,8 @@ blueprint:
               sort: false
         button_3_action_dim:
           name: Dim Actions
-          description: Define if the default dimming behaviour should be used or
-            the actions which can be denined in the custom section below.
+          description: Define if the default dimming behaviour should be used or the
+            actions which can be denined in the custom section below.
           default: default
           selector:
             select:
@@ -611,6 +608,7 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+              custom_value: false
     button_3_custom:
       name: Button 3 - Custom Actions
       icon: mdi:numeric-3-circle-outline
@@ -713,21 +711,21 @@ blueprint:
               - {}
         button_4_scene:
           name: Scene
-          description: Single scene to be activated with the first button 
-            if the 'Scene Turn on' action is selected.
+          description: Single scene to be activated with the first button if the 'Scene
+            Turn on' action is selected.
           default: None
           selector:
             entity:
               domain:
               - scene
               multiple: false
+              reorder: false
         button_4_action_short:
           name: Short Release Action
-          description: Action triggered by short pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by short pressing and releasing the button
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_on
           selector:
             select:
@@ -748,18 +746,17 @@ blueprint:
               sort: false
         button_4_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_4_action_long:
           name: Long Release Action
-          description: Action triggered by long pressing and releasing the button or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by long pressing and releasing the button
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -780,15 +777,15 @@ blueprint:
               sort: false
         button_4_long_prevent_on_change:
           name: Prevent Long Release Action on change
-          description: If clicked and the active button (Current Light) changes, the 
+          description: If clicked and the active button (Current Light) changes, the
             action will not be fired on the first click if this option is enabled.
           default: false
           selector:
-            boolean:
+            boolean: {}
         button_4_action_dim:
           name: Dim Actions
-          description: Define if the default dimming behaviour should be used or
-            the actions which can be denined in the custom section below.
+          description: Define if the default dimming behaviour should be used or the
+            actions which can be denined in the custom section below.
           default: default
           selector:
             select:
@@ -802,13 +799,13 @@ blueprint:
               multiple: false
               mode: dropdown
               sort: false
+              custom_value: false
         button_4_action_double:
           name: Double Press Action
-          description: Action triggered by pressing and releasing the button twice or 
-            type in any other service that is called with the lights entity ids
-            as target.
-            You can also define a custom action in the section below that will overwrite 
-            this option. 
+          description: Action triggered by pressing and releasing the button twice
+            or type in any other service that is called with the lights entity ids
+            as target. You can also define a custom action in the section below that
+            will overwrite this option.
           default: homeassistant.turn_off
           selector:
             select:
@@ -914,7 +911,7 @@ blueprint:
           default: []
           selector:
             action: {}
-  source_url: https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
+  source_url: https://github.com/XXBrain/blueprints/blob/main/philips_zigbee_dial_combined_z2m.yaml
 mode: single
 max_exceeded: silent
 variables:
@@ -971,7 +968,7 @@ variables:
       button_2: !input button_2_long_prevent_on_change
       button_3: !input button_3_long_prevent_on_change
       button_4: !input button_4_long_prevent_on_change
-  actions_dim:  
+  actions_dim:
     button_1: !input button_1_action_dim
     button_2: !input button_2_action_dim
     button_3: !input button_3_action_dim
@@ -988,61 +985,47 @@ variables:
     button_4: !input button_4_medium_rotation_max
   dim_entities:
     button_1:
-      entity_id: '{% if actions_dim["button_1"] == "scene" and scenes["button_1"] != None %}
-          {{ state_attr(scenes["button_1"], "entity_id") | default }}
-        {% else %}
-          {{ lights["button_1"]["entity_id"] | default }}
-        {% endif %}'
+      entity_id: '{% if actions_dim["button_1"] == "scene" and scenes["button_1"]
+        != None %} {{ state_attr(scenes["button_1"], "entity_id") | default }} {%
+        else %} {{ lights["button_1"]["entity_id"] | default }} {% endif %}'
     button_2:
-      entity_id: '{% if actions_dim["button_2"] == "scene" and scenes["button_2"] != None %}
-          {{ state_attr(scenes["button_2"], "entity_id") | default }}
-        {% else %}
-          {{ lights["button_2"]["entity_id"] | default }}
-        {% endif %}'
+      entity_id: '{% if actions_dim["button_2"] == "scene" and scenes["button_2"]
+        != None %} {{ state_attr(scenes["button_2"], "entity_id") | default }} {%
+        else %} {{ lights["button_2"]["entity_id"] | default }} {% endif %}'
     button_3:
-      entity_id: '{% if actions_dim["button_3"] == "scene" and scenes["button_3"] != None %}
-          {{ state_attr(scenes["button_3"], "entity_id") | default }}
-        {% else %}
-          {{ lights["button_3"]["entity_id"] | default }}
-        {% endif %}'
+      entity_id: '{% if actions_dim["button_3"] == "scene" and scenes["button_3"]
+        != None %} {{ state_attr(scenes["button_3"], "entity_id") | default }} {%
+        else %} {{ lights["button_3"]["entity_id"] | default }} {% endif %}'
     button_4:
-      entity_id: '{% if actions_dim["button_4"] == "scene" and scenes["button_4"] != None %}
-          {{ state_attr(scenes["button_4"], "entity_id") | default }}
-        {% else %}
-          {{ lights["button_4"]["entity_id"] | default }}
-        {% endif %}'
+      entity_id: '{% if actions_dim["button_4"] == "scene" and scenes["button_4"]
+        != None %} {{ state_attr(scenes["button_4"], "entity_id") | default }} {%
+        else %} {{ lights["button_4"]["entity_id"] | default }} {% endif %}'
   mqtt_topic: !input mqtt_topic
-  mqtt_topic_action: '{{ mqtt_topic + "/action" }}'      
+  mqtt_topic_action: '{{ mqtt_topic + "/action" }}'
   current_light_helper: !input current_light_helper
   double_press_helper: !input double_press_helper
   dim_scale: !input dim_scale
-
 triggers:
-  - topic: !input mqtt_topic
-    platform: mqtt
-    id: dial-tab_01
-
+- topic: !input mqtt_topic
+  platform: mqtt
+  id: dial-tab_01
 condition:
-  - condition: template
-    value_template: '{{ trigger.payload_json.action in 
-    ["button_1_press_release","button_2_press_release",
-    "button_3_press_release","button_4_press_release",
-    "button_1_hold_release","button_2_hold_release",
-    "button_3_hold_release","button_4_hold_release",
-    "brightness_step_up","brightness_step_down"]  }}'
+- condition: template
+  value_template: '{{ trigger.payload_json.action in ["button_1_press_release","button_2_press_release",
+    "button_3_press_release","button_4_press_release", "button_1_hold_release","button_2_hold_release",
+    "button_3_hold_release","button_4_hold_release", "brightness_step_up","brightness_step_down"]  }}'
 action:
 - variables:
     selected_light: none
     action: '{{ trigger.payload_json.action }}'
     last_button: '{{ states(current_light_helper) }}'
-## double press detection start ##
 - choose:
   - conditions: '{{ trigger.payload_json.action is match(find="^button_[1-4]") }}'
     sequence:
     - wait_for_trigger:
-        - topic: '{{ mqtt_topic + "/action" }}' 
-          payload: '{{ trigger.payload_json.action }}'
-          trigger: mqtt
+      - topic: '{{ mqtt_topic + "/action" }}'
+        payload: '{{ trigger.payload_json.action }}'
+        trigger: mqtt
       timeout:
         hours: 0
         minutes: 0
@@ -1050,86 +1033,61 @@ action:
         milliseconds: 500
       continue_on_timeout: true
     - if:
-        - condition: template
-          value_template: "{{ wait.trigger != None }}"
+      - condition: template
+        value_template: '{{ double_press_helper != None and wait.trigger != None }}'
       then:
-        - action: input_boolean.turn_on
-          target:
-            entity_id: '{{ double_press_helper }}'
-## double press detection end ##
-#- service: logbook.log
-#  data:
-#    name: dial1
-#    message: >
-#        trigger.payload_json: {{ trigger.payload_json }}
-#
-# Buttons 
-#
+      - action: input_boolean.turn_on
+        target:
+          entity_id: '{{ double_press_helper }}'
 - choose:
   - conditions: '{{ trigger.payload_json.action is match(find="^button_[1-4]") }}'
     sequence:
     - variables:
-        action_regex: '{{ trigger.payload_json.action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}'
-        #button: '{{ action_regex[0] | string }}' 
-        button: '{% if action_regex[0] == "button_1" %}
-            {{ "button_1" }}
-          {% elif action_regex[0] == "button_2" %}
-            {{ "button_2" }}
-          {% elif action_regex[0] == "button_3" %}
-            {{ "button_3" }}
-          {% elif action_regex[0] == "button_4" %}
-            {{ "button_4" }}
-          {% endif %}'
+        action_regex: '{{ trigger.payload_json.action | regex_findall_index(find="^(button_[1-4])_(\w*)",
+          index=0, ignorecase=False) }}'
+        button: '{% if action_regex[0] == "button_1" %} {{ "button_1" }} {% elif action_regex[0]
+          == "button_2" %} {{ "button_2" }} {% elif action_regex[0] == "button_3"
+          %} {{ "button_3" }} {% elif action_regex[0] == "button_4" %} {{ "button_4"
+          }} {% endif %}'
         button_changed: '{{ last_button != button }}'
-        is_double: '{{ is_state(double_press_helper, "on") }}'
-        press_type: '{% if is_double %}
-            {{ "double_press" }}
-          {% elif action_regex[1] == "press_release" %}
-            {{ "press_release" }}
-          {% elif action_regex[1] == "hold_release" %}
-            {{ "hold_release" }}
-          {% endif %}'
+        is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
+        press_type: '{% if is_double %} {{ "double_press" }} {% elif action_regex[1]
+          == "press_release" %} {{ "press_release" }} {% elif action_regex[1] == "hold_release"
+          %} {{ "hold_release" }} {% endif %}'
         actions_default_buttons: '{{ actions_default[press_type] | default}}'
         actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
         action_default: '{{ actions_default_buttons[button] | default }}'
         prevent_on_change_buttons: '{{ prevents_on_change[press_type] | default}}'
-        prevent_on_change: '{{ prevent_on_change_buttons[button] == "True" and button_changed }}'
+        prevent_on_change: '{{ prevent_on_change_buttons[button] == "True" and button_changed
+          }}'
         use_default: '{{ action_default != None }}'
         use_custom: '{{ actions_custom_buttons[button] != [] }}'
-    # Reset double press helper
-    - action: input_boolean.turn_off
-      target:
-        entity_id: '{{ double_press_helper }}'
-#    - service: logbook.log
-#      data:
-#        name: dial1
-#        message: >
-#          action: {{ action }},
-#          press_type: {{ press_type }},
-#          action_default: {{ action_default}},
-#          prevent_on_change: {{ prevent_on_change }},
-#          use_default: {{ use_default }},
-#          use_custom: {{ use_custom }},
-#          button: {{ button }},
-#          last_button: {{ last_button }},
-#          button_changed: {{ button_changed }},
-#          action_custom: '{{ actions_custom_buttons[button] }}'        
     - choose:
-      - conditions: '{{ use_default and not prevent_on_change and action_default == "homeassistant.turn_on"}}'
+      - conditions: '{{ is_double }}'
         sequence:
-          - service: homeassistant.turn_on
-            target: '{{ lights[button] }}'
-      - conditions: '{{ use_default and not prevent_on_change and action_default == "homeassistant.turn_off"}}'
-        sequence:
-          - service: homeassistant.turn_off
-            target: '{{ lights[button] }}'
-      - conditions: '{{ use_default and not prevent_on_change and scenes[button] != "None" and action_default == "scene.turn_on"}}'
-        sequence:
-          - service: scene.turn_on
+          - action: input_boolean.turn_off
             target:
-              entity_id: '{{ scenes[button] }}'
+              entity_id: '{{ double_press_helper }}'
     - choose:
-      - conditions: '{{ press_type == "press_release" and use_custom and not prevent_on_change }}'
+      - conditions: '{{ use_default and not prevent_on_change and action_default ==
+          "homeassistant.turn_on"}}'
+        sequence:
+        - service: homeassistant.turn_on
+          target: '{{ lights[button] }}'
+      - conditions: '{{ use_default and not prevent_on_change and action_default ==
+          "homeassistant.turn_off"}}'
+        sequence:
+        - service: homeassistant.turn_off
+          target: '{{ lights[button] }}'
+      - conditions: '{{ use_default and not prevent_on_change and scenes[button] !=
+          "None" and action_default == "scene.turn_on"}}'
+        sequence:
+        - service: scene.turn_on
+          target:
+            entity_id: '{{ scenes[button] }}'
+    - choose:
+      - conditions: '{{ press_type == "press_release" and use_custom and not prevent_on_change
+          }}'
         sequence:
         - choose:
           - conditions: '{{ button == "button_1" }}'
@@ -1140,7 +1098,8 @@ action:
             sequence: !input button_3_short_custom
           - conditions: '{{ button == "button_4" }}'
             sequence: !input button_4_short_custom
-      - conditions: '{{ press_type == "hold_release" and use_custom and not prevent_on_change }}'
+      - conditions: '{{ press_type == "hold_release" and use_custom and not prevent_on_change
+          }}'
         sequence:
         - choose:
           - conditions: '{{ button == "button_1" }}'
@@ -1162,16 +1121,13 @@ action:
             sequence: !input button_3_double_custom
           - conditions: '{{ button == "button_4" }}'
             sequence: !input button_4_double_custom
-    # Set current button to helper variable              
     - service: input_text.set_value
       target:
         entity_id: !input current_light_helper
       data:
         value: '{{ button }}'
-#
-# Rotation
-#
-  - conditions: '{{ trigger.payload_json.action is match(find="^brightness_step") }}'
+  - conditions: '{{ trigger.payload_json.action is match(find="^brightness_step")
+      }}'
     sequence:
     - variables:
         command: '{{ action }}'
@@ -1179,14 +1135,8 @@ action:
         small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
         medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
         step_size_name: "{% if step_size <= small_rotation_max_button %}\n  {{ \"Small\"
-          }}\n{% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\" }}\n{%
-          else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
-#    - service: logbook.log
-#      data:
-#        name: dial1
-#        message: >
-#          command: {{ command }},
-#          step_size: {{ step_size }}
+          }}\n{% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\"
+          }}\n{% else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
     - choose:
       - conditions:
         - '{{ command == "brightness_step_up" }}'
@@ -1198,29 +1148,41 @@ action:
               - '{{ actions_dim[last_button] == "custom" }}'
             sequence:
             - choose:
-              - conditions: '{{ last_button == "button_1" and step_size_name == "Small" }}'
+              - conditions: '{{ last_button == "button_1" and step_size_name == "Small"
+                  }}'
                 sequence: !input clockwise_rotation_small_1
-              - conditions: '{{ last_button == "button_2" and step_size_name == "Small" }}'
+              - conditions: '{{ last_button == "button_2" and step_size_name == "Small"
+                  }}'
                 sequence: !input clockwise_rotation_small_2
-              - conditions: '{{ last_button == "button_3" and step_size_name == "Small" }}'
+              - conditions: '{{ last_button == "button_3" and step_size_name == "Small"
+                  }}'
                 sequence: !input clockwise_rotation_small_3
-              - conditions: '{{ last_button == "button_4" and step_size_name == "Small" }}'
+              - conditions: '{{ last_button == "button_4" and step_size_name == "Small"
+                  }}'
                 sequence: !input clockwise_rotation_small_4
-              - conditions: '{{ last_button == "button_1" and step_size_name == "Medium" }}'
+              - conditions: '{{ last_button == "button_1" and step_size_name == "Medium"
+                  }}'
                 sequence: !input clockwise_rotation_medium_1
-              - conditions: '{{ last_button == "button_2" and step_size_name == "Medium" }}'
+              - conditions: '{{ last_button == "button_2" and step_size_name == "Medium"
+                  }}'
                 sequence: !input clockwise_rotation_medium_2
-              - conditions: '{{ last_button == "button_3" and step_size_name == "Medium" }}'
+              - conditions: '{{ last_button == "button_3" and step_size_name == "Medium"
+                  }}'
                 sequence: !input clockwise_rotation_medium_3
-              - conditions: '{{ last_button == "button_4" and step_size_name == "Medium" }}'
+              - conditions: '{{ last_button == "button_4" and step_size_name == "Medium"
+                  }}'
                 sequence: !input clockwise_rotation_medium_4
-              - conditions: '{{ last_button == "button_1" and step_size_name == "Large" }}'
+              - conditions: '{{ last_button == "button_1" and step_size_name == "Large"
+                  }}'
                 sequence: !input clockwise_rotation_large_1
-              - conditions: '{{ last_button == "button_2" and step_size_name == "Large" }}'
+              - conditions: '{{ last_button == "button_2" and step_size_name == "Large"
+                  }}'
                 sequence: !input clockwise_rotation_large_3
-              - conditions: '{{ last_button == "button_3" and tep_size_name == "Large" }}'
+              - conditions: '{{ last_button == "button_3" and tep_size_name == "Large"
+                  }}'
                 sequence: !input clockwise_rotation_large_3
-              - conditions: '{{ last_button == "button_4" and step_size_name == "Large" }}'
+              - conditions: '{{ last_button == "button_4" and step_size_name == "Large"
+                  }}'
                 sequence: !input clockwise_rotation_large_4
           - conditions: '{{ current_light_helper != none }}'
             sequence:
@@ -1245,29 +1207,41 @@ action:
               - '{{ actions_dim[last_button] == "custom" }}'
             sequence:
             - choose:
-              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name == "Small" }}'
+              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name
+                  == "Small" }}'
                 sequence: !input counter_clockwise_rotation_small_1
-              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name == "Small" }}'
+              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name
+                  == "Small" }}'
                 sequence: !input counter_clockwise_rotation_small_2
-              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name == "Small" }}'
+              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name
+                  == "Small" }}'
                 sequence: !input counter_clockwise_rotation_small_3
-              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name == "Small" }}'
+              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name
+                  == "Small" }}'
                 sequence: !input counter_clockwise_rotation_small_4
-              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name == "Medium" }}'
+              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name
+                  == "Medium" }}'
                 sequence: !input counter_clockwise_rotation_medium_1
-              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name == "Medium" }}'
+              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name
+                  == "Medium" }}'
                 sequence: !input counter_clockwise_rotation_medium_2
-              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name == "Medium" }}'
+              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name
+                  == "Medium" }}'
                 sequence: !input counter_clockwise_rotation_medium_3
-              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name == "Medium" }}'
+              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name
+                  == "Medium" }}'
                 sequence: !input counter_clockwise_rotation_medium_4
-              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name == "Large" }}'
+              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name
+                  == "Large" }}'
                 sequence: !input counter_clockwise_rotation_large_1
-              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name == "Large" }}'
+              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name
+                  == "Large" }}'
                 sequence: !input counter_clockwise_rotation_large_3
-              - conditions: '{{ states(current_light_helper) == "button_3" and tep_size_name == "Large" }}'
+              - conditions: '{{ states(current_light_helper) == "button_3" and tep_size_name
+                  == "Large" }}'
                 sequence: !input counter_clockwise_rotation_large_3
-              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name == "Large" }}'
+              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name
+                  == "Large" }}'
                 sequence: !input counter_clockwise_rotation_large_4
           - conditions:
             - '{{ current_light_helper != none }}'
