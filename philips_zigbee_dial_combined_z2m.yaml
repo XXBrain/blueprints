@@ -48,6 +48,16 @@ blueprint:
           max: 5.0
           step: 0.01
           mode: slider
+    detection_timeout:
+      name: Double Press Detection Timeout
+      description: Time (milliseconds) to wait for detecting a double press before proceeding.
+      default: 500
+      selector:
+        number:
+          min: 0
+          max: 1000
+          step: 1
+          mode: slider
     button_1_lights:
       name: Button 1 - Lights
       icon: mdi:lightbulb
@@ -1005,6 +1015,8 @@ variables:
   current_light_helper: !input current_light_helper
   double_press_helper: !input double_press_helper
   dim_scale: !input dim_scale
+  detection_timeout: '{% if double_press_helper != None %} !input detection_timeout 
+                      {% else %} {{ 0 }} {% endif %}'
 triggers:
 - topic: !input mqtt_topic
   platform: mqtt
@@ -1030,7 +1042,7 @@ action:
         hours: 0
         minutes: 0
         seconds: 0
-        milliseconds: 500
+        milliseconds: !input detection_timeout
       continue_on_timeout: true
     - if:
       - condition: template
@@ -1050,7 +1062,8 @@ action:
           %} {{ "button_3" }} {% elif action_regex[0] == "button_4" %} {{ "button_4"
           }} {% endif %}'
         button_changed: '{{ last_button != button }}'
-        is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
+        is_double: '{{ double_press_helper != None and is_state(double_press_helper,
+          "on") }}'
         press_type: '{% if is_double %} {{ "double_press" }} {% elif action_regex[1]
           == "press_release" %} {{ "press_release" }} {% elif action_regex[1] == "hold_release"
           %} {{ "hold_release" }} {% endif %}'
@@ -1065,9 +1078,9 @@ action:
     - choose:
       - conditions: '{{ is_double }}'
         sequence:
-          - action: input_boolean.turn_off
-            target:
-              entity_id: '{{ double_press_helper }}'
+        - action: input_boolean.turn_off
+          target:
+            entity_id: '{{ double_press_helper }}'
     - choose:
       - conditions: '{{ use_default and not prevent_on_change and action_default ==
           "homeassistant.turn_on"}}'
