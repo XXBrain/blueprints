@@ -1,0 +1,44 @@
+blueprint:
+  name: Brightness Limiter (call_service)
+  description: Reduce entity birghtness if limit reached
+  domain: automation
+  input:
+    first_light:
+      name: Light
+      description: The  to limit
+      selector:
+        target:
+          entity:
+          - {}
+    brightness_limit:
+      name: Limit percentage
+      description: Limit percentage in
+      default: 80
+      selector:
+        number:
+          min: 1
+          max: 99
+          step: 1
+          mode: slider
+mode: restart
+max_exceeded: silent
+variables:
+  first_light: !input first_light
+  brightness_limit: !input brightness_limit
+
+trigger:
+  - platform: event
+    event_type: call_service
+    event_data:
+      domain: light
+      service: turn_on
+      service_data:
+        entity_id: !input first_light
+condition:
+  - condition: template
+    value_template: "{{ trigger.event.data.service_data.brightness_pct > brightness_limit }}"
+action:
+  - service: light.turn_on
+    data:
+      brightness_pct: brightness_limit
+    target: !input first_light
