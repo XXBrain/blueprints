@@ -1087,7 +1087,10 @@ action:
     - variables:
         button_changed: '{{ last_button != button }}'
         is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
-        press_type: '{{ action_regex[1] }}'
+        #press_type: '{{ action_regex[1] }}'
+        press_type: '{% if is_double %} {{ "double_press" }} 
+                    {% else %} {{ action_regex[1] }} 
+                    {% endif %}'
         actions_default_buttons: '{{ actions_default[press_type] | default}}'
         actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
         action_default: '{{ actions_default_buttons[button] | default }}'
