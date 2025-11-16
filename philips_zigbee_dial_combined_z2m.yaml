@@ -14,7 +14,7 @@ blueprint:
       description: Topic of the Philips Hue Tap Dial Switch
       default: zigbee2mqtt/<device name>
     current_light_helper:
-      name: Current Light Helper
+      name: Last Clicked Button Helper
       description: Text helper to track the current button for rotate actions. Set
         for the dimmer controls and action configuration to change which lights etc.
         they are controlling according to the last pressed button.
@@ -109,8 +109,11 @@ blueprint:
               sort: false
         button_1_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked and the active button (Current Light) changes, the
-            action will not be fired on the first click if this option is enabled.
+          description: If clicked and the active button changes, the  action 
+            will not be fired on the first click if this option is enabled.
+            This can be useful, if you only want to select the rotation target 
+            without triggering the defined press action,
+            e.g. if the action is mute/unmute but you want to change the volume.
           default: false
           selector:
             boolean: {}
@@ -1051,11 +1054,6 @@ action:
         {{ action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}
       {% endif %}'
     button: '{{  action_regex[0] }}'
-#    button: '{% if dial_clicked and  action_regex[0] == "button_1" %} {{ "button_1" }} 
-#      {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
-#      {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
-#      {% elif dial_clicked and  action_regex[0] == "button_4" %} {{ "button_4" }} 
-#      {% endif %}'
     detection_timeout_button: '{% if double_press_helper != None %} 
           {{ detection_timeout }}
         {% else %} {{ 0 }} {% endif %}'
@@ -1090,15 +1088,11 @@ action:
         button_changed: '{{ last_button != button }}'
         is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
         press_type: '{{ action_regex[1] }}'
-        #press_type: '{% if is_double %} {{ "double_press" }} 
-        #    {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
-        #    {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
-        #    {% endif %}'
         actions_default_buttons: '{{ actions_default[press_type] | default}}'
         actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
         action_default: '{{ actions_default_buttons[button] | default }}'
         prevent_on_change_buttons: '{{ prevents_on_change[press_type] | default}}'
-        prevent_on_change: '{{ prevent_on_change_buttons[button] == "True" and button_changed
+        prevent_on_change: '{{ prevent_on_change_buttons[button] == True and button_changed
           }}'
         use_default: '{{ action_default != None }}'
         use_custom: '{{ actions_custom_buttons[button] != [] }}'
@@ -1108,6 +1102,7 @@ action:
       data:
         value: '{{ button }}'
     - choose:
+      # Reset double press helper
       - conditions: '{{ is_double }}'
         sequence:
         - action: input_boolean.turn_off
