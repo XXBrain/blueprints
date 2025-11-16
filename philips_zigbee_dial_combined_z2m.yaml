@@ -1026,25 +1026,7 @@ variables:
     button_2: !input button_2_medium_rotation_max
     button_3: !input button_3_medium_rotation_max
     button_4: !input button_4_medium_rotation_max
-  dim_entities:
-    button_1:
-      entity_id: '{% if actions_dim["button_1"] == "scene" and scenes["button_1"]
-        != None %} {{ state_attr(scenes["button_1"], "entity_id") | default }} {%
-        else %} {{ lights["button_1"]["entity_id"] | default }} {% endif %}'
-    button_2:
-      entity_id: '{% if actions_dim["button_2"] == "scene" and scenes["button_2"]
-        != None %} {{ state_attr(scenes["button_2"], "entity_id") | default }} {%
-        else %} {{ lights["button_2"]["entity_id"] | default }} {% endif %}'
-    button_3:
-      entity_id: '{% if actions_dim["button_3"] == "scene" and scenes["button_3"]
-        != None %} {{ state_attr(scenes["button_3"], "entity_id") | default }} {%
-        else %} {{ lights["button_3"]["entity_id"] | default }} {% endif %}'
-    button_4:
-      entity_id: '{% if actions_dim["button_4"] == "scene" and scenes["button_4"]
-        != None %} {{ state_attr(scenes["button_4"], "entity_id") | default }} {%
-        else %} {{ lights["button_4"]["entity_id"] | default }} {% endif %}'
   mqtt_topic: !input mqtt_topic
-  mqtt_topic_action: '{{ mqtt_topic + "/action" }}'
   current_light_helper: !input current_light_helper
   double_press_helper: !input double_press_helper
   dim_scale: !input dim_scale
@@ -1068,21 +1050,23 @@ action:
     action_regex: '{% if dial_clicked %} 
         {{ action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}
       {% endif %}'
-    button: '{% if dial_clicked and  action_regex[0] == "button_1" %} {{ "button_1" }} 
-      {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
-      {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
-      {% elif dial_clicked and  action_regex[0] == "button_4" %} {{ "button_4" }} 
-      {% endif %}'
-    detect_double_press: '{{ dial_clicked and double_press_helper != None 
-        and (actions_default["double_press"][button] != "None"
-        or actions_custom["double_press"][button] != []) }}'
+    button: '{{  action_regex[0] }}'
+#    button: '{% if dial_clicked and  action_regex[0] == "button_1" %} {{ "button_1" }} 
+#      {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
+#      {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
+#      {% elif dial_clicked and  action_regex[0] == "button_4" %} {{ "button_4" }} 
+#      {% endif %}'
     detection_timeout_button: '{% if double_press_helper != None %} 
           {{ detection_timeout }}
         {% else %} {{ 0 }} {% endif %}'
+    detect_double_press: '{{ dial_clicked and double_press_helper != None 
+        and detection_timeout_button > 0
+        and (actions_default["double_press"][button] != "None"
+        or actions_custom["double_press"][button] != []) }}'
     
 - choose:
   ### Double press detection ###
-  - conditions: '{{ dial_clicked and detect_double_press }}'
+  - conditions: '{{ detect_double_press }}'
     sequence:
     - wait_for_trigger:
       - topic: '{{ mqtt_topic + "/action" }}'
@@ -1105,10 +1089,11 @@ action:
     - variables:
         button_changed: '{{ last_button != button }}'
         is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
-        press_type: '{% if is_double %} {{ "double_press" }} 
-            {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
-            {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
-            {% endif %}'
+        press_type: '{{ action_regex[1] }}'
+        #press_type: '{% if is_double %} {{ "double_press" }} 
+        #    {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
+        #    {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
+        #    {% endif %}'
         actions_default_buttons: '{{ actions_default[press_type] | default}}'
         actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
         action_default: '{{ actions_default_buttons[button] | default }}'
@@ -1200,8 +1185,15 @@ action:
         - '{{ current_light_helper != none }}'
         - '{{ step_size != 255 }}'
         sequence:
+        - variables:
+            dim_entities:
+              entity_id: '
+                {% if actions_dim[last_button] == "scene" and scenes[last_button] != None %}
+                  {{ state_attr(scenes[last_button], "entity_id") | default }} 
+                {% else %} {{ lights[last_button]["entity_id"] | default }} 
+                {% endif %}'
         - service: light.turn_on
-          target: '{{ dim_entities[last_button] }}'
+          target: '{{ dim_entities }}'
           data:
             brightness_step_pct: '{{ step_percentage }}'
             transition: 1
