@@ -972,33 +972,33 @@ variables:
       button_3: !input button_3_double_custom
       button_4: !input button_3_double_custom
     brightness_step_up:
-      Small:
+      small:
         button_1: !input clockwise_rotation_small_1
         button_2: !input clockwise_rotation_small_2
         button_3: !input clockwise_rotation_small_3
         button_4: !input clockwise_rotation_small_4
-      Medium:
+      medium:
         button_1: !input clockwise_rotation_medium_1
         button_2: !input clockwise_rotation_medium_2
         button_3: !input clockwise_rotation_medium_3
         button_4: !input clockwise_rotation_medium_4
-      Large:
+      large:
         button_1: !input clockwise_rotation_large_1
         button_2: !input clockwise_rotation_large_2
         button_3: !input clockwise_rotation_large_3
         button_4: !input clockwise_rotation_large_4
     brightness_step_down:
-      Small:
+      small:
         button_1: !input counter_clockwise_rotation_small_1
         button_2: !input counter_clockwise_rotation_small_2
         button_3: !input counter_clockwise_rotation_small_3
         button_4: !input counter_clockwise_rotation_small_4
-      Medium:
+      medium:
         button_1: !input counter_clockwise_rotation_medium_1
         button_2: !input counter_clockwise_rotation_medium_2
         button_3: !input counter_clockwise_rotation_medium_3
         button_4: !input counter_clockwise_rotation_medium_4
-      Large:
+      large:
         button_1: !input counter_clockwise_rotation_large_1
         button_2: !input counter_clockwise_rotation_large_2
         button_3: !input counter_clockwise_rotation_large_3
@@ -1148,22 +1148,20 @@ action:
   ### Rotation actions ###
   - conditions: 
     - '{{ action is match(find="^brightness_step") }}'
-    - '{{ step_size != 255 }}'
     sequence:
     - variables:
         step_size: '{{trigger.payload_json.action_step_size}}'
-        step_percentage: '{% if action == "brightness_step_up" %} 
-                      {{ step_size * dim_scale }} 
-                  {% elif action == "brightness_step_down" %}
-                      {{ -step_size * dim_scale }}
-                  {% endif %}'
+        step_percentage: '
+            {% if action == "brightness_step_up" %}{{ step_size * dim_scale }} 
+            {% elif action == "brightness_step_down" %}{{ -step_size * dim_scale }}
+            {% endif %}'
         small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
         medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
-        step_size_name: "
-            {% if step_size <= small_rotation_max_button %}\n  {{ \"Small\" }}\n
-            {% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\" }}\n
-            {% else %}\n  {{ \"Large\" }}\n
-            {% endif %}              \n"
+        step_size_name: '
+            {% if step_size <= small_rotation_max_button %}{{ "small" }}
+            {% elif step_size <= medium_rotation_max_button %}{{ "medium" }}
+            {% else %}{{ "large" }}
+            {% endif %}'
     - choose:
       - conditions: 
         - '{{ (action == "brightness_step_up" or action == "brightness_step_down") }}' 
