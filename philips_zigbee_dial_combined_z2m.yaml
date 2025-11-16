@@ -50,13 +50,14 @@ blueprint:
           mode: slider
     detection_timeout:
       name: Double Press Detection Timeout
-      description: Time (milliseconds) to wait for detecting a double press before proceeding.
+      description: Time (milliseconds) to wait for detecting a double press before
+        proceeding.
       default: 500
       selector:
         number:
-          min: 0
-          max: 1000
-          step: 1
+          min: 0.0
+          max: 1000.0
+          step: 1.0
           mode: slider
     button_1_lights:
       name: Button 1 - Lights
@@ -967,6 +968,38 @@ variables:
       button_2: !input button_2_double_custom
       button_3: !input button_3_double_custom
       button_4: !input button_3_double_custom
+    brightness_step_up:
+      Small:
+        button_1: !input clockwise_rotation_small_1
+        button_2: !input clockwise_rotation_small_2
+        button_3: !input clockwise_rotation_small_3
+        button_4: !input clockwise_rotation_small_4
+      Medium:
+        button_1: !input clockwise_rotation_medium_1
+        button_2: !input clockwise_rotation_medium_2
+        button_3: !input clockwise_rotation_medium_3
+        button_4: !input clockwise_rotation_medium_4
+      Large:
+        button_1: !input clockwise_rotation_large_1
+        button_2: !input clockwise_rotation_large_2
+        button_3: !input clockwise_rotation_large_3
+        button_4: !input clockwise_rotation_large_4
+    brightness_step_down:
+      Small:
+        button_1: !input counter_clockwise_rotation_small_1
+        button_2: !input counter_clockwise_rotation_small_2
+        button_3: !input counter_clockwise_rotation_small_3
+        button_4: !input counter_clockwise_rotation_small_4
+      Medium:
+        button_1: !input counter_clockwise_rotation_medium_1
+        button_2: !input counter_clockwise_rotation_medium_2
+        button_3: !input counter_clockwise_rotation_medium_3
+        button_4: !input counter_clockwise_rotation_medium_4
+      Large:
+        button_1: !input counter_clockwise_rotation_large_1
+        button_2: !input counter_clockwise_rotation_large_2
+        button_3: !input counter_clockwise_rotation_large_3
+        button_4: !input counter_clockwise_rotation_large_4
   prevents_on_change:
     press_release:
       button_1: !input button_1_short_prevent_on_change
@@ -1015,34 +1048,48 @@ variables:
   current_light_helper: !input current_light_helper
   double_press_helper: !input double_press_helper
   dim_scale: !input dim_scale
-  detection_timeout: '{% if double_press_helper != None %} !input detection_timeout 
-                      {% else %} {{ 0 }} {% endif %}'
+  detection_timeout: !input detection_timeout
 triggers:
 - topic: !input mqtt_topic
   platform: mqtt
   id: dial-tab_01
 condition:
 - condition: template
-  value_template: '{{ trigger.payload_json.action in ["button_1_press_release","button_2_press_release",
-    "button_3_press_release","button_4_press_release", "button_1_hold_release","button_2_hold_release",
-    "button_3_hold_release","button_4_hold_release", "brightness_step_up","brightness_step_down"]  }}'
+  value_template: '{{ trigger.payload_json.action in ["button_1_press_release",
+    "button_2_press_release", "button_3_press_release","button_4_press_release",
+    "button_1_hold_release", "button_2_hold_release", "button_3_hold_release",
+    "button_4_hold_release", "brightness_step_up", "brightness_step_down"] }}'
 action:
 - variables:
-    selected_light: none
     action: '{{ trigger.payload_json.action }}'
     last_button: '{{ states(current_light_helper) }}'
+    dial_clicked: '{{ action is match(find="^(button_[1-4])_(\w*)", ignorecase=False) }}'
+    dial_rotated: '{{ action is match(find="^brightness_step") }}'
+    action_regex: '{% if dial_clicked %} 
+        {{ action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}
+      {% endif %}'
+    button: '{% if dial_clicked and  action_regex[0] == "button_1" %} {{ "button_1" }} 
+      {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
+      {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
+      {% elif dial_clicked and  action_regex[0] == "button_4" %} {{ "button_4" }} 
+      {% endif %}'
+    detect_double_press: '{{ dial_clicked and double_press_helper != None 
+        and (actions_default["double_press"][button] != "None"
+        or actions_custom["double_press"][button] != []) }}'
+    detection_timeout_button: '{% if double_press_helper != None %} 
+          {{ detection_timeout }}
+        {% else %} {{ 0 }} {% endif %}'
+    
 - choose:
-  - conditions: '{{ trigger.payload_json.action is match(find="^button_[1-4]") }}'
+  ### Double press detection ###
+  - conditions: '{{ dial_clicked and detect_double_press }}'
     sequence:
     - wait_for_trigger:
       - topic: '{{ mqtt_topic + "/action" }}'
-        payload: '{{ trigger.payload_json.action }}'
+        payload: '{{ action }}'
         trigger: mqtt
       timeout:
-        hours: 0
-        minutes: 0
-        seconds: 0
-        milliseconds: !input detection_timeout
+        milliseconds: '{{ detection_timeout_button }}'
       continue_on_timeout: true
     - if:
       - condition: template
@@ -1052,21 +1099,16 @@ action:
         target:
           entity_id: '{{ double_press_helper }}'
 - choose:
-  - conditions: '{{ trigger.payload_json.action is match(find="^button_[1-4]") }}'
+  ### Button actions ###
+  - conditions: '{{ dial_clicked }}'
     sequence:
     - variables:
-        action_regex: '{{ trigger.payload_json.action | regex_findall_index(find="^(button_[1-4])_(\w*)",
-          index=0, ignorecase=False) }}'
-        button: '{% if action_regex[0] == "button_1" %} {{ "button_1" }} {% elif action_regex[0]
-          == "button_2" %} {{ "button_2" }} {% elif action_regex[0] == "button_3"
-          %} {{ "button_3" }} {% elif action_regex[0] == "button_4" %} {{ "button_4"
-          }} {% endif %}'
         button_changed: '{{ last_button != button }}'
-        is_double: '{{ double_press_helper != None and is_state(double_press_helper,
-          "on") }}'
-        press_type: '{% if is_double %} {{ "double_press" }} {% elif action_regex[1]
-          == "press_release" %} {{ "press_release" }} {% elif action_regex[1] == "hold_release"
-          %} {{ "hold_release" }} {% endif %}'
+        is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
+        press_type: '{% if is_double %} {{ "double_press" }} 
+            {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
+            {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
+            {% endif %}'
         actions_default_buttons: '{{ actions_default[press_type] | default}}'
         actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
         action_default: '{{ actions_default_buttons[button] | default }}'
@@ -1075,28 +1117,39 @@ action:
           }}'
         use_default: '{{ action_default != None }}'
         use_custom: '{{ actions_custom_buttons[button] != [] }}'
+    - service: input_text.set_value
+      target:
+        entity_id: !input current_light_helper
+      data:
+        value: '{{ button }}'
     - choose:
       - conditions: '{{ is_double }}'
         sequence:
         - action: input_boolean.turn_off
           target:
             entity_id: '{{ double_press_helper }}'
+#    - service: logbook.log
+#      data:
+#        name: dial1
+#        message: >
+#          action: {{ action }},
+#          press_type: {{ press_type }},
+#          action_default: {{ action_default}},
+#          prevent_on_change: {{ prevent_on_change }},
+#          use_default: {{ use_default }},
+#          use_custom: {{ use_custom }},
+#          button: {{ button }},
+#          last_button: {{ last_button }},
+#          button_changed: {{ button_changed }},
+#          action_custom: '{{ actions_custom_buttons[button] }}',
+#          lights[button]: '{{ lights[button] }}' ,
+#          actions_custom[press_type][button]: '{{ actions_custom[press_type][button] }}'
     - choose:
-      - conditions: '{{ use_default and not prevent_on_change and action_default ==
-          "homeassistant.turn_on"}}'
+      - conditions: '{{ use_default and not prevent_on_change 
+            and action_default != "scene.turn_on"}}'
         sequence:
-        - service: homeassistant.turn_on
-          target: '{{ lights[button] }}'
-      - conditions: '{{ use_default and not prevent_on_change and action_default ==
-          "homeassistant.turn_off"}}'
-        sequence:
-        - service: homeassistant.turn_off
-          target: '{{ lights[button] }}'
-      - conditions: '{{ use_default and not prevent_on_change and action_default ==
-          "homeassistant.toggle"}}'
-        sequence:
-        - service: homeassistant.toggle
-          target: '{{ lights[button] }}'
+          - target: '{{ lights[button] }}'
+            action: '{{ action_default }}'
       - conditions: '{{ use_default and not prevent_on_change and scenes[button] !=
           "None" and action_default == "scene.turn_on"}}'
         sequence:
@@ -1104,169 +1157,51 @@ action:
           target:
             entity_id: '{{ scenes[button] }}'
     - choose:
-      - conditions: '{{ press_type == "press_release" and use_custom and not prevent_on_change
-          }}'
+      - conditions: '{{ use_custom and not prevent_on_change }}'
         sequence:
-        - choose:
-          - conditions: '{{ button == "button_1" }}'
-            sequence: !input button_1_short_custom
-          - conditions: '{{ button == "button_2" }}'
-            sequence: !input button_2_short_custom
-          - conditions: '{{ button == "button_3" }}'
-            sequence: !input button_3_short_custom
-          - conditions: '{{ button == "button_4" }}'
-            sequence: !input button_4_short_custom
-      - conditions: '{{ press_type == "hold_release" and use_custom and not prevent_on_change
-          }}'
-        sequence:
-        - choose:
-          - conditions: '{{ button == "button_1" }}'
-            sequence: !input button_1_long_custom
-          - conditions: '{{ button == "button_2" }}'
-            sequence: !input button_2_long_custom
-          - conditions: '{{ button == "button_3" }}'
-            sequence: !input button_3_long_custom
-          - conditions: '{{ button == "button_4" }}'
-            sequence: !input button_4_long_custom
-      - conditions: '{{ press_type == "double_press" and use_custom }}'
-        sequence:
-        - choose:
-          - conditions: '{{ button == "button_1" }}'
-            sequence: !input button_1_double_custom
-          - conditions: '{{ button == "button_2" }}'
-            sequence: !input button_2_double_custom
-          - conditions: '{{ button == "button_3" }}'
-            sequence: !input button_3_double_custom
-          - conditions: '{{ button == "button_4" }}'
-            sequence: !input button_4_double_custom
-    - service: input_text.set_value
-      target:
-        entity_id: !input current_light_helper
-      data:
-        value: '{{ button }}'
-  - conditions: '{{ trigger.payload_json.action is match(find="^brightness_step")
-      }}'
+          - repeat:
+              for_each: "{{ actions_custom[press_type][button] }}"
+              sequence:
+                - target: "{{ repeat.item.target }}"
+                  data: "{{ repeat.item.data }}"
+                  action: "{{ repeat.item.action }}"
+  ### Rotation actions ###
+  - conditions: 
+    - '{{ action is match(find="^brightness_step") }}'
+    - '{{ step_size != 255 }}'
     sequence:
     - variables:
-        command: '{{ action }}'
         step_size: '{{trigger.payload_json.action_step_size}}'
+        step_percentage: '{% if action == "brightness_step_up" %} 
+                      {{ step_size * dim_scale }} 
+                  {% elif action == "brightness_step_down" %}
+                      {{ -step_size * dim_scale }}
+                  {% endif %}'
         small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
         medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
-        step_size_name: "{% if step_size <= small_rotation_max_button %}\n  {{ \"Small\"
-          }}\n{% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\"
-          }}\n{% else %}\n  {{ \"Large\" }}\n{% endif %}              \n"
+        step_size_name: "
+            {% if step_size <= small_rotation_max_button %}\n  {{ \"Small\" }}\n
+            {% elif step_size <= medium_rotation_max_button %}\n  {{ \"Medium\" }}\n
+            {% else %}\n  {{ \"Large\" }}\n
+            {% endif %}              \n"
     - choose:
-      - conditions:
-        - '{{ command == "brightness_step_up" }}'
+      - conditions: 
+        - '{{ (action == "brightness_step_up" or action == "brightness_step_down") }}' 
+        - '{{ lights[last_button] == {} or actions_dim[last_button] == "custom" }}'
+        - '{{ step_size != 255 }}'
         sequence:
-        - choose:
-          - conditions:
-            - or:
-              - '{{ lights[last_button] == {} }}'
-              - '{{ actions_dim[last_button] == "custom" }}'
-            sequence:
-            - choose:
-              - conditions: '{{ last_button == "button_1" and step_size_name == "Small"
-                  }}'
-                sequence: !input clockwise_rotation_small_1
-              - conditions: '{{ last_button == "button_2" and step_size_name == "Small"
-                  }}'
-                sequence: !input clockwise_rotation_small_2
-              - conditions: '{{ last_button == "button_3" and step_size_name == "Small"
-                  }}'
-                sequence: !input clockwise_rotation_small_3
-              - conditions: '{{ last_button == "button_4" and step_size_name == "Small"
-                  }}'
-                sequence: !input clockwise_rotation_small_4
-              - conditions: '{{ last_button == "button_1" and step_size_name == "Medium"
-                  }}'
-                sequence: !input clockwise_rotation_medium_1
-              - conditions: '{{ last_button == "button_2" and step_size_name == "Medium"
-                  }}'
-                sequence: !input clockwise_rotation_medium_2
-              - conditions: '{{ last_button == "button_3" and step_size_name == "Medium"
-                  }}'
-                sequence: !input clockwise_rotation_medium_3
-              - conditions: '{{ last_button == "button_4" and step_size_name == "Medium"
-                  }}'
-                sequence: !input clockwise_rotation_medium_4
-              - conditions: '{{ last_button == "button_1" and step_size_name == "Large"
-                  }}'
-                sequence: !input clockwise_rotation_large_1
-              - conditions: '{{ last_button == "button_2" and step_size_name == "Large"
-                  }}'
-                sequence: !input clockwise_rotation_large_3
-              - conditions: '{{ last_button == "button_3" and tep_size_name == "Large"
-                  }}'
-                sequence: !input clockwise_rotation_large_3
-              - conditions: '{{ last_button == "button_4" and step_size_name == "Large"
-                  }}'
-                sequence: !input clockwise_rotation_large_4
-          - conditions: '{{ current_light_helper != none }}'
-            sequence:
-            - service: light.turn_on
-              target: '{{ dim_entities[last_button] }}'
-              data:
-                brightness_step_pct: '{{ step_size * dim_scale }}'
-                transition: 1
-          default:
-          - service: light.turn_on
-            target: '{{ lights["button_1"] }}'
-            data:
-              brightness_step_pct: '{{ step_size * dim_scale }}'
-              transition: 1
-      - conditions:
-        - '{{ command == "brightness_step_down" }}'
+          - repeat:
+              for_each: "{{ actions_custom[action][step_size_name][last_button] }}"
+              sequence:
+                - target: "{{ repeat.item.target }}"
+                  data: "{{ repeat.item.data }}"
+                  action: "{{ repeat.item.action }}"
+      - conditions: 
+        - '{{ current_light_helper != none }}'
+        - '{{ step_size != 255 }}'
         sequence:
-        - choose:
-          - conditions:
-            - or:
-              - '{{ lights[last_button] == {} }}'
-              - '{{ actions_dim[last_button] == "custom" }}'
-            sequence:
-            - choose:
-              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name
-                  == "Small" }}'
-                sequence: !input counter_clockwise_rotation_small_1
-              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name
-                  == "Small" }}'
-                sequence: !input counter_clockwise_rotation_small_2
-              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name
-                  == "Small" }}'
-                sequence: !input counter_clockwise_rotation_small_3
-              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name
-                  == "Small" }}'
-                sequence: !input counter_clockwise_rotation_small_4
-              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name
-                  == "Medium" }}'
-                sequence: !input counter_clockwise_rotation_medium_1
-              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name
-                  == "Medium" }}'
-                sequence: !input counter_clockwise_rotation_medium_2
-              - conditions: '{{ states(current_light_helper) == "button_3" and step_size_name
-                  == "Medium" }}'
-                sequence: !input counter_clockwise_rotation_medium_3
-              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name
-                  == "Medium" }}'
-                sequence: !input counter_clockwise_rotation_medium_4
-              - conditions: '{{ states(current_light_helper) == "button_1" and step_size_name
-                  == "Large" }}'
-                sequence: !input counter_clockwise_rotation_large_1
-              - conditions: '{{ states(current_light_helper) == "button_2" and step_size_name
-                  == "Large" }}'
-                sequence: !input counter_clockwise_rotation_large_3
-              - conditions: '{{ states(current_light_helper) == "button_3" and tep_size_name
-                  == "Large" }}'
-                sequence: !input counter_clockwise_rotation_large_3
-              - conditions: '{{ states(current_light_helper) == "button_4" and step_size_name
-                  == "Large" }}'
-                sequence: !input counter_clockwise_rotation_large_4
-          - conditions:
-            - '{{ current_light_helper != none }}'
-            - '{{ step_size != 255 }}'
-            sequence:
-            - service: light.turn_on
-              target: '{{ dim_entities[last_button] }}'
-              data:
-                brightness_step_pct: '{{ -step_size * dim_scale }}'
-                transition: 1
+        - service: light.turn_on
+          target: '{{ dim_entities[last_button] }}'
+          data:
+            brightness_step_pct: '{{ step_percentage }}'
+            transition: 1
