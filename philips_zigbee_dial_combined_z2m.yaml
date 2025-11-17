@@ -1053,7 +1053,12 @@ action:
     action_regex: '{% if dial_clicked %} 
         {{ action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}
       {% endif %}'
-    button: '{{  action_regex[0] }}'
+    #button: '{{  action_regex[0] }}'
+    button: '{% if dial_clicked and  action_regex[0] == "button_1" %} {{ "button_1" }} 
+            {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
+            {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
+            {% elif dial_clicked and  action_regex[0] == "button_4" %} {{ "button_4" }} 
+            {% endif %}'
     detection_timeout_button: '{% if double_press_helper != None %} 
           {{ detection_timeout }}
         {% else %} {{ 0 }} {% endif %}'
@@ -1087,10 +1092,13 @@ action:
     - variables:
         button_changed: '{{ last_button != button }}'
         is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
-        #press_type: '{{ action_regex[1] }}'
+        #press_type: '{% if is_double %} {{ "double_press" }} 
+        #            {% else %} {{ action_regex[1] }} 
+        #            {% endif %}'
         press_type: '{% if is_double %} {{ "double_press" }} 
-                    {% else %} {{ action_regex[1] }} 
-                    {% endif %}'
+            {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
+            {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
+            {% endif %}'
         actions_default_buttons: '{{ actions_default[press_type] | default}}'
         actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
         action_default: '{{ actions_default_buttons[button] | default }}'
