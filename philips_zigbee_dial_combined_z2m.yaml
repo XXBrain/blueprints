@@ -1134,10 +1134,11 @@ action:
 #          button_changed: {{ button_changed }},
 #          action_custom: '{{ actions_custom_buttons[button] }}',
 #          lights[button]: '{{ lights[button] }}' ,
+#          scenes[button]: '{{ scenes[button] }}'
 #          actions_custom[press_type][button]: '{{ actions_custom[press_type][button] }}'
     - choose:
       - conditions: '{{ use_default and not prevent_on_change 
-            and action_default != "scene.turn_on"}}'
+            and action_default != "scene.turn_on" and lights[button] != {} }}'
         sequence:
           - target: '{{ lights[button] }}'
             action: '{{ action_default }}'
@@ -1153,9 +1154,13 @@ action:
           - repeat:
               for_each: "{{ actions_custom[press_type][button] }}"
               sequence:
-                - target: "{{ repeat.item.target }}"
-                  data: "{{ repeat.item.data }}"
-                  action: "{{ repeat.item.action }}"
+                - if:
+                  - condition: template
+                    value_template: '{{ repeat.item.target  != None }}'
+                  then:
+                  - target: "{{ repeat.item.target }}"
+                    data: "{{ repeat.item.data }}"
+                    action: "{{ repeat.item.action }}"
   ### Rotation actions ###
   - conditions: 
     - '{{ action is match(find="^brightness_step") }}'
