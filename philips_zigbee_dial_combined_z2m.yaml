@@ -1156,7 +1156,7 @@ action:
               sequence:
                 - if:
                   - condition: template
-                    value_template: '{{ repeat.item.target  != None }}'
+                    value_template: '{{ repeat != None }}'
                   then:
                   - target: "{{ repeat.item.target }}"
                     data: "{{ repeat.item.data }}"
