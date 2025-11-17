@@ -1148,17 +1148,14 @@ action:
     - choose:
       - conditions: 
           - '{{ use_custom and not prevent_on_change }}'
+          - '{{ actions_custom[press_type][button] != [] }}'
         sequence:
           - repeat:
               for_each: "{{ actions_custom[press_type][button] }}"
               sequence:
-                - if:
-                  - condition: template
-                    value_template: '{{ repeat != None }}'
-                  then:
-                  - target: "{{ repeat.item.target }}"
-                    data: "{{ repeat.item.data }}"
-                    action: "{{ repeat.item.action }}"
+                - target: "{{ repeat.item.target }}"
+                  data: "{{ repeat.item.data }}"
+                  action: "{{ repeat.item.action }}"
   ### Rotation actions ###
   - conditions: 
     - '{{ action is match(find="^brightness_step") }}'
