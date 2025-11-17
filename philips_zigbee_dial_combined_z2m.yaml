@@ -1053,7 +1053,6 @@ action:
     action_regex: '{% if dial_clicked %} 
         {{ action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}
       {% endif %}'
-    #button: '{{  action_regex[0] }}'
     button: '{% if dial_clicked and  action_regex[0] == "button_1" %} {{ "button_1" }} 
             {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
             {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
@@ -1092,9 +1091,6 @@ action:
     - variables:
         button_changed: '{{ last_button != button }}'
         is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
-        #press_type: '{% if is_double %} {{ "double_press" }} 
-        #            {% else %} {{ action_regex[1] }} 
-        #            {% endif %}'
         press_type: '{% if is_double %} {{ "double_press" }} 
             {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
             {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
@@ -1137,8 +1133,9 @@ action:
 #          scenes[button]: '{{ scenes[button] }}'
 #          actions_custom[press_type][button]: '{{ actions_custom[press_type][button] }}'
     - choose:
-      - conditions: '{{ use_default and not prevent_on_change 
-            and action_default != "scene.turn_on" and lights[button] != {} }}'
+      - conditions:
+        - '{{ use_default and not prevent_on_change }}'
+        - '{{ action_default != "scene.turn_on" and lights[button] != {} }}'
         sequence:
           - target: '{{ lights[button] }}'
             action: '{{ action_default }}'
@@ -1149,7 +1146,8 @@ action:
           target:
             entity_id: '{{ scenes[button] }}'
     - choose:
-      - conditions: '{{ use_custom and not prevent_on_change }}'
+      - conditions: 
+          - '{{ use_custom and not prevent_on_change }}'
         sequence:
           - repeat:
               for_each: "{{ actions_custom[press_type][button] }}"
@@ -1180,9 +1178,9 @@ action:
             {% endif %}'
     - choose:
       - conditions: 
-        - '{{ (action == "brightness_step_up" or action == "brightness_step_down") }}' 
         - '{{ lights[last_button] == {} or actions_dim[last_button] == "custom" }}'
         - '{{ step_size != 255 }}'
+        - '{{ actions_custom[action][step_size_name][last_button] != [] }}'
         sequence:
           - repeat:
               for_each: "{{ actions_custom[action][step_size_name][last_button] }}"
