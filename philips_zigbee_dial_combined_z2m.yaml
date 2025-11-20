@@ -1147,15 +1147,24 @@ action:
             entity_id: '{{ scenes[button] }}'
     - choose:
       - conditions: 
-          - '{{ use_custom and not prevent_on_change }}'
-          - '{{ actions_custom[press_type][button] != [] }}'
+        - '{{ use_custom and not prevent_on_change }}'
+        - '{{ actions_custom[press_type][button] != [] }}'
         sequence:
           - repeat:
               for_each: "{{ actions_custom[press_type][button] }}"
               sequence:
-                - target: "{{ repeat.item.target }}"
-                  data: "{{ repeat.item.data }}"
-                  action: "{{ repeat.item.action }}"
+                - choose:
+                  - conditions: 
+                    - '{{ repeat.item.target is defined }}'
+                    sequence:
+                    - action: '{{ repeat.item.action }}'
+                      data: '{{ repeat.item.data }}'
+                      target: '{{ repeat.item.target }}'
+                  - conditions: 
+                    - '{{ repeat.item.target is not defined }}'
+                    sequence:
+                    - action: '{{ repeat.item.action }}'
+                      data: '{{ repeat.item.data }}'
   ### Rotation actions ###
   - conditions: 
     - '{{ action is match(find="^brightness_step") }}'
@@ -1182,9 +1191,22 @@ action:
           - repeat:
               for_each: "{{ actions_custom[action][step_size_name][last_button] }}"
               sequence:
-                - target: "{{ repeat.item.target }}"
-                  data: "{{ repeat.item.data }}"
-                  action: "{{ repeat.item.action }}"
+                - choose:
+                  - conditions: 
+                    - '{{ repeat.item.target != None }}'
+                    sequence:
+                    - choose:
+                      - conditions: 
+                        - '{{ repeat.item.target is defined }}'
+                        sequence:
+                        - action: '{{ repeat.item.action }}'
+                          data: '{{ repeat.item.data }}'
+                          target: '{{ repeat.item.target }}'
+                      - conditions: 
+                        - '{{ repeat.item.target is not defined }}'
+                        sequence:
+                        - action: '{{ repeat.item.action }}'
+                          data: '{{ repeat.item.data }}'
       - conditions: 
         - '{{ current_light_helper != none }}'
         - '{{ step_size != 255 }}'
