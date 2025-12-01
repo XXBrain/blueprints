@@ -1,80 +1,115 @@
 blueprint:
   name: Philips Tap Dial Switch 4 Lights or Custom (Z2M)
   description: Control lights, scenes and custom actions with a Philips Hue Tap Switch.
-    Use the four buttons to control light(s) with an on/off or toggle command, activate
-    scnenes and/or run custom actions. This blueprint supports short release, hold
-    release and double press mqtt actions. Each beheaviour can configured seperatly.
-    The dial can be used to dim the most recently used lights or call a custom rotation
-    action. for that button. based on apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
-    gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af
+      Use the four buttons to control light(s) with an on/off or toggle command, activate
+      scnenes and/or run custom actions. This blueprint supports short release, hold
+      release and double press mqtt actions. Each beheaviour can configured seperatly.
+      The dial can be used to dim the most recently used lights or call a custom rotation
+      action. for that button. Based on 
+    * apollo1220 - https://github.com/apollo1220/blueprints/blob/main/philips_zigbee_dial.yaml
+    * gtunes - https://gist.github.com/gtunes-dev/c87168d84292004e760ce697ba1ae6af
+    * panhans https://github.com/panhans/homeassistant/blob/main/blueprints/script/scene_toggle.yaml
   domain: automation
   input:
-    mqtt_topic:
-      name: MQTT Topic
-      description: Topic of the Philips Hue Tap Dial Switch
-      default: zigbee2mqtt/<device name>
-    current_light_helper:
-      name: Last Clicked Button Helper
-      description: Text helper to track the current button for rotate actions. Set
-        for the dimmer controls and action configuration to change which lights etc.
-        they are controlling according to the last pressed button.
-      default:
-      selector:
-        entity:
-          domain:
-          - input_text
-          multiple: false
-          reorder: false
-    double_press_helper:
-      name: Double Press Helper
-      description: A boolean helper to detect double press actions. This is required
-        because z2m does support this natively.
-      default:
-      selector:
-        entity:
-          domain:
-          - input_boolean
-          multiple: false
-          reorder: false
-    dim_scale:
-      name: Diming Scale
-      description: Scale factor for the dimming. This value will be multiplied by
-        the value given from the dial. So lower number, more gradual dimming. Larger
-        number, faster dimming.
-      default: 1.0
-      selector:
-        number:
-          min: 0.0
-          max: 5.0
-          step: 0.01
-          mode: slider
-    detection_timeout:
-      name: Double Press Detection Timeout
-      description: Time (milliseconds) to wait for detecting a double press before
-        proceeding.
-      default: 500
-      selector:
-        number:
-          min: 0.0
-          max: 1000.0
-          step: 1.0
-          mode: slider
-    button_1_lights:
-      name: Button 1 - Lights
-      icon: mdi:lightbulb
+    global_settings:
+        name: Global Settings
+        icon: mdi:cog-box
+        collapsed: true
+        input:
+          mqtt_topic:
+            name: MQTT Topic
+            description: Topic of the Philips Hue Tap Dial Switch
+            default: zigbee2mqtt/<device name>
+          current_light_helper:
+            name: Last Clicked Button Helper
+            description: Text helper to track the current button for rotate actions. Set
+              for the dimmer controls and action configuration to change which lights etc.
+              they are controlling according to the last pressed button.
+            default:
+            selector:
+              entity:
+                domain:
+                - input_text
+                multiple: false
+                reorder: false
+          double_press_helper:
+            name: Double Press Helper
+            description: A boolean helper to detect double press actions. This is required
+              because z2m does not support this natively.
+            default:
+            selector:
+              entity:
+                domain:
+                - input_boolean
+                multiple: false
+                reorder: false
+          dim_scale:
+            name: Diming Scale
+            description: Scale factor for the dimming. This value will be multiplied by
+              the value given from the dial. So lower number, more gradual dimming. Larger
+              number, faster dimming.
+            default: 1.0
+            selector:
+              number:
+                min: 0.0
+                max: 5.0
+                step: 0.01
+                mode: slider
+          detection_timeout:
+            name: Double Press Detection Timeout
+            description: Time (milliseconds) to wait for detecting a double press before
+              proceeding.
+            default: 500
+            selector:
+              number:
+                min: 0.0
+                max: 1000.0
+                step: 1.0
+                mode: slider
+          transition:
+            name: Scene Toggle Transition time
+            description: Transition time when switching between scenes
+            default: 1
+            selector:
+              number:
+                min: 0
+                max: 10
+                step: 0.1
+                unit_of_measurement: s
+          use_static_order:
+            name: "Scene Toggle Static order"
+            description: "This automation is based on timestamps of the activation of the scenes. If this option is enabled a static order will be used instead of the dynamic one."
+            default: false
+            selector:
+              boolean:
+          reset_after:
+            name: Scene Toggle Reset After
+            description: If the static order is activated, a timeout can be set after which the order is reset to the first scene. If 0 is set the timeout is disabled.
+            default: 0
+            selector:
+              number:
+                min: 0
+                max: 120
+                step: 1
+                unit_of_measurement: s
+    button_1_scenes:
+      name: Button 1 - Lights & Scenes
+      icon: mdi:lamps
       collapsed: true
       input:
         button_1_enities:
           name: Lights
-          description: The light(s) to control with first button
+          description: The light(s) to control with the button
           default: {}
           selector:
             target:
               entity:
-              - {}
+                domain:
+                - light
+                - switch
         button_1_scene:
           name: Scene
-          description: Single scene to be activated with the first button if the 'Scene
+          description: Single scene to be activated with the button if the 'Scene
             Turn on' action is selected.
           default: None
           selector:
@@ -83,12 +118,43 @@ blueprint:
               - scene
               multiple: false
               reorder: false
+        button_1_area:
+          name: Scenes Toggle Area
+          description: Name of the area where you want to toggle scenes. 
+            All scenes defined in that area will be toggled if the option 
+            "Scenes Toggle" is selected as action.
+          default: ""
+          selector:
+            area:
+        button_1_included_scenes:
+          name: Included Scenes
+          description: Additional scenes to be included when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+        button_1_excluded_scenes:
+          name: Excluded Scenes
+          description: Scenes to be excluded when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+    button_1_lights:
+      name: Button 1 - Default Actions
+      icon: mdi:numeric-1-circle
+      collapsed: true
+      input:
         button_1_action_short:
-          name: Short Release Action
+          name: Short Release Action 
           description: Action triggered by short pressing and releasing the button
             or type in any other service that is called with the selected lights entity
             ids as target. You can also define a custom action in the section below
-            that will overwrite this option.
+            that will overwrite this option. 
           default: homeassistant.turn_on
           selector:
             select:
@@ -99,6 +165,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -109,11 +177,11 @@ blueprint:
               sort: false
         button_1_short_prevent_on_change:
           name: Prevent Short Release Action on change
-          description: If clicked and the active button changes, the  action 
-            will not be fired on the first click if this option is enabled.
-            This can be useful, if you only want to select the rotation target 
-            without triggering the defined press action,
-            e.g. if the action is mute/unmute but you want to change the volume.
+          description: If clicked and the active button changes, the  action will
+            not be fired on the first click if this option is enabled. This can be
+            useful, if you only want to select the rotation target without triggering
+            the defined press action, e.g. if the action is mute/unmute but you want
+            to change the volume.
           default: false
           selector:
             boolean: {}
@@ -133,6 +201,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -151,13 +221,15 @@ blueprint:
         button_1_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or the
-            actions which can be denined in the custom section below.
+            actions which can be defined in the custom section below.
           default: default
           selector:
             select:
               options:
               - label: Default (Dim Lights)
                 value: default
+              - label: Dim Area
+                value: area
               - label: Dim Scene Lights
                 value: scene
               - label: Custom
@@ -184,6 +256,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -279,22 +353,24 @@ blueprint:
           default: []
           selector:
             action: {}
-    button_2_lights:
-      name: Button 2 - Lights
-      icon: mdi:lightbulb
+    button_2_scenes:
+      name: Button 2 - Lights & Scenes
+      icon: mdi:lamps
       collapsed: true
       input:
         button_2_enities:
           name: Lights
-          description: The light(s) to control with first button
+          description: The light(s) to control with the button
           default: {}
           selector:
             target:
               entity:
-              - {}
+                domain:
+                - light
+                - switch
         button_2_scene:
           name: Scene
-          description: Single scene to be activated with the first button if the 'Scene
+          description: Single scene to be activated with the button if the 'Scene
             Turn on' action is selected.
           default: None
           selector:
@@ -303,6 +379,37 @@ blueprint:
               - scene
               multiple: false
               reorder: false
+        button_2_area:
+          name: Scenes Toggle Area
+          description: Name of the area where you want to toggle scenes. 
+            All scenes defined in that area will be toggled if the option 
+            "Scenes Toggle" is selected as action.
+          default: ""
+          selector:
+            area:
+        button_2_included_scenes:
+          name: Included Scenes
+          description: Additional scenes to be included when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+        button_2_excluded_scenes:
+          name: Excluded Scenes
+          description: Scenes to be excluded when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+    button_2_lights:
+      name: Button 2 - Default Actions
+      icon: mdi:numeric-2-circle
+      collapsed: true
+      input:
         button_2_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button
@@ -319,6 +426,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -350,6 +459,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -368,13 +479,15 @@ blueprint:
         button_2_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or the
-            actions which can be denined in the custom section below.
+            actions which can be defined in the custom section below.
           default: default
           selector:
             select:
               options:
               - label: Default (Dim Lights)
                 value: default
+              - label: Dim Area
+                value: area
               - label: Dim Scene Lights
                 value: scene
               - label: Custom
@@ -399,6 +512,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -494,22 +609,24 @@ blueprint:
           default: []
           selector:
             action: {}
-    button_3_lights:
-      name: Button 3 - Lights
-      icon: mdi:lightbulb
+    button_3_scenes:
+      name: Button 3 - Lights & Scenes
+      icon: mdi:lamps
       collapsed: true
       input:
         button_3_enities:
           name: Lights
-          description: The light(s) to control with first button
+          description: The light(s) to control with the button
           default: {}
           selector:
             target:
               entity:
-              - {}
+                domain:
+                - light
+                - switch
         button_3_scene:
           name: Scene
-          description: Single scene to be activated with the first button if the 'Scene
+          description: Single scene to be activated with the button if the 'Scene
             Turn on' action is selected.
           default: None
           selector:
@@ -518,6 +635,37 @@ blueprint:
               - scene
               multiple: false
               reorder: false
+        button_3_area:
+          name: Scenes Toggle Area
+          description: Name of the area where you want to toggle scenes. 
+            All scenes defined in that area will be toggled if the option 
+            "Scenes Toggle" is selected as action.
+          default: ""
+          selector:
+            area:
+        button_3_included_scenes:
+          name: Included Scenes
+          description: Additional scenes to be included when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+        button_3_excluded_scenes:
+          name: Excluded Scenes
+          description: Scenes to be excluded when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+    button_3_lights:
+      name: Button 3 - Default Actions
+      icon: mdi:numeric-3-circle
+      collapsed: true
+      input:
         button_3_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button
@@ -535,6 +683,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -566,6 +716,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -597,6 +749,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -608,13 +762,15 @@ blueprint:
         button_3_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or the
-            actions which can be denined in the custom section below.
+            actions which can be defined in the custom section below.
           default: default
           selector:
             select:
               options:
               - label: Default (Dim Lights)
                 value: default
+              - label: Dim Area
+                value: area
               - label: Dim Scene Lights
                 value: scene
               - label: Custom
@@ -710,22 +866,24 @@ blueprint:
           default: []
           selector:
             action: {}
-    button_4_lights:
-      name: Button 4 - Lights
-      icon: mdi:lightbulb
+    button_4_scenes:
+      name: Button 4 - Lights & Scenes
+      icon: mdi:lamps
       collapsed: true
       input:
         button_4_enities:
           name: Lights
-          description: The light(s) to control with first button
+          description: The light(s) to control with the button
           default: {}
           selector:
             target:
               entity:
-              - {}
+                domain:
+                - light
+                - switch
         button_4_scene:
           name: Scene
-          description: Single scene to be activated with the first button if the 'Scene
+          description: Single scene to be activated with the button if the 'Scene
             Turn on' action is selected.
           default: None
           selector:
@@ -734,6 +892,37 @@ blueprint:
               - scene
               multiple: false
               reorder: false
+        button_4_area:
+          name: Scenes Toggle Area
+          description: Name of the area where you want to toggle scenes. 
+            All scenes defined in that area will be toggled if the option 
+            "Scenes Toggle" is selected as action.
+          default: ""
+          selector:
+            area:
+        button_4_included_scenes:
+          name: Included Scenes
+          description: Additional scenes to be included when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+        button_4_excluded_scenes:
+          name: Excluded Scenes
+          description: Scenes to be excluded when toggeling scenes.
+          default: []
+          selector:
+            entity:
+              filter:
+                domain: scene
+              multiple: true
+    button_4_lights:
+      name: Button 4 - Default Actions
+      icon: mdi:numeric-4-circle
+      collapsed: true
+      input:
         button_4_action_short:
           name: Short Release Action
           description: Action triggered by short pressing and releasing the button
@@ -750,6 +939,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -781,6 +972,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -799,13 +992,15 @@ blueprint:
         button_4_action_dim:
           name: Dim Actions
           description: Define if the default dimming behaviour should be used or the
-            actions which can be denined in the custom section below.
+            actions which can be defined in the custom section below.
           default: default
           selector:
             select:
               options:
               - label: Default (Dim Lights)
                 value: default
+              - label: Dim Area
+                value: area
               - label: Dim Scene Lights
                 value: scene
               - label: Custom
@@ -830,6 +1025,8 @@ blueprint:
                 value: homeassistant.turn_off
               - label: Toggle
                 value: homeassistant.toggle
+              - label: Scenes Toggle
+                value: scenes.toggle
               - label: Scene Turn On
                 value: scene.turn_on
               - label: None
@@ -1029,6 +1226,24 @@ variables:
     button_2: !input button_2_medium_rotation_max
     button_3: !input button_3_medium_rotation_max
     button_4: !input button_4_medium_rotation_max
+  scenes_toggle:
+  areas:
+    button_1: !input "button_1_area"
+    button_2: !input "button_2_area"
+    button_3: !input "button_3_area"
+    button_4: !input "button_4_area"
+  included_scenes:
+    button_1: !input "button_1_included_scenes"
+    button_2: !input "button_2_included_scenes"
+    button_3: !input "button_3_included_scenes"
+    button_4: !input "button_4_included_scenes"
+  excluded_scenes:
+    button_1: !input "button_1_excluded_scenes"
+    button_2: !input "button_2_excluded_scenes"
+    button_3: !input "button_3_excluded_scenes"
+    button_4: !input "button_4_excluded_scenes"
+  reset_after: !input "reset_after"
+  use_static_order: !input use_static_order
   mqtt_topic: !input mqtt_topic
   current_light_helper: !input current_light_helper
   double_press_helper: !input double_press_helper
@@ -1040,34 +1255,34 @@ triggers:
   id: dial-tab_01
 condition:
 - condition: template
-  value_template: '{{ trigger.payload_json.action in ["button_1_press_release",
-    "button_2_press_release", "button_3_press_release","button_4_press_release",
-    "button_1_hold_release", "button_2_hold_release", "button_3_hold_release",
-    "button_4_hold_release", "brightness_step_up", "brightness_step_down"] }}'
+  value_template: '{{ trigger.payload_json.action in ["button_1_press_release", "button_2_press_release",
+    "button_3_press_release","button_4_press_release", "button_1_hold_release", "button_2_hold_release",
+    "button_3_hold_release", "button_4_hold_release", "brightness_step_up", "brightness_step_down"]
+    }}'
 action:
 - variables:
     action: '{{ trigger.payload_json.action }}'
     last_button: '{{ states(current_light_helper) }}'
-    dial_clicked: '{{ action is match(find="^(button_[1-4])_(\w*)", ignorecase=False) }}'
+    dial_clicked: '{{ action is match(find="^(button_[1-4])_(\w*)", ignorecase=False)
+      }}'
     dial_rotated: '{{ action is match(find="^brightness_step") }}'
-    action_regex: '{% if dial_clicked %} 
-        {{ action | regex_findall_index(find="^(button_[1-4])_(\w*)", index=0, ignorecase=False) }}
-      {% endif %}'
+    action_regex: '{% if dial_clicked %} {{ action | regex_findall_index(find="^(button_[1-4])_(\w*)",
+      index=0, ignorecase=False) }} {% endif %}'
     button: '{% if dial_clicked and  action_regex[0] == "button_1" %} {{ "button_1" }} 
-            {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
-            {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
-            {% elif dial_clicked and  action_regex[0] == "button_4" %} {{ "button_4" }} 
-            {% endif %}'
-    detection_timeout_button: '{% if double_press_helper != None %} 
-          {{ detection_timeout }}
-        {% else %} {{ 0 }} {% endif %}'
+      {% elif dial_clicked and  action_regex[0] == "button_2" %} {{ "button_2" }} 
+      {% elif dial_clicked and  action_regex[0] == "button_3" %} {{ "button_3" }} 
+      {% elif dial_clicked and  action_regex[0] == "button_4" %} {{ "button_4" }}
+      {% endif %}'
+    detection_timeout_button: '{% if double_press_helper != None %} {{ detection_timeout }}
+      {% else %} {{ 0 }} 
+      {% endif %}'
     detect_double_press: '{{ dial_clicked and double_press_helper != None 
-        and detection_timeout_button > 0
-        and (actions_default["double_press"][button] != "None"
-        or actions_custom["double_press"][button] != []) }}'
+      and detection_timeout_button > 0 and (actions_default["double_press"][button] != "None" 
+      or actions_custom["double_press"][button] != []) }}'
     
+    last_triggered: "{{ as_timestamp(iif(state_attr(this.entity_id,'last_triggered') == none,
+      now(), state_attr(this.entity_id,'last_triggered'))) }}"
 - choose:
-  ### Double press detection ###
   - conditions: '{{ detect_double_press }}'
     sequence:
     - wait_for_trigger:
@@ -1085,16 +1300,16 @@ action:
         target:
           entity_id: '{{ double_press_helper }}'
 - choose:
-  ### Button actions ###
   - conditions: '{{ dial_clicked }}'
     sequence:
     - variables:
         button_changed: '{{ last_button != button }}'
-        is_double: '{{ double_press_helper != None and is_state(double_press_helper, "on") }}'
+        is_double: '{{ double_press_helper != None and is_state(double_press_helper,
+          "on") }}'
         press_type: '{% if is_double %} {{ "double_press" }} 
-            {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
-            {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
-            {% endif %}'
+          {% elif action_regex[1] == "press_release" %} {{ "press_release" }} 
+          {% elif action_regex[1] == "hold_release" %} {{ "hold_release" }} 
+          {% endif %}'
         actions_default_buttons: '{{ actions_default[press_type] | default}}'
         actions_custom_buttons: '{{ actions_custom[press_type] | default }}'
         action_default: '{{ actions_default_buttons[button] | default }}'
@@ -1109,113 +1324,127 @@ action:
       data:
         value: '{{ button }}'
     - choose:
-      # Reset double press helper
       - conditions: '{{ is_double }}'
         sequence:
         - action: input_boolean.turn_off
           target:
             entity_id: '{{ double_press_helper }}'
-#    - service: logbook.log
-#      data:
-#        name: dial1
-#        message: >
-#          action: {{ action }},
-#          press_type: {{ press_type }},
-#          action_default: {{ action_default}},
-#          prevent_on_change: {{ prevent_on_change }},
-#          use_default: {{ use_default }},
-#          use_custom: {{ use_custom }},
-#          button: {{ button }},
-#          last_button: {{ last_button }},
-#          button_changed: {{ button_changed }},
-#          action_custom: '{{ actions_custom_buttons[button] }}',
-#          lights[button]: '{{ lights[button] }}' ,
-#          scenes[button]: '{{ scenes[button] }}'
-#          actions_custom[press_type][button]: '{{ actions_custom[press_type][button] }}'
     - choose:
       - conditions:
-        - '{{ use_default and not prevent_on_change }}'
+        - '{{ use_default and not prevent_on_change and action_default != "scenes.toggle" }}'
         - '{{ action_default != "scene.turn_on" and lights[button] != {} }}'
         sequence:
-          - target: '{{ lights[button] }}'
-            action: '{{ action_default }}'
+        - target: '{{ lights[button] }}'
+          action: '{{ action_default }}'
       - conditions: '{{ use_default and not prevent_on_change and scenes[button] !=
           "None" and action_default == "scene.turn_on"}}'
         sequence:
         - service: scene.turn_on
           target:
             entity_id: '{{ scenes[button] }}'
+      - conditions: '{{ use_default and not prevent_on_change and scenes[button] !=
+          "None" and action_default == "scenes.toggle"}}'
+        sequence:
+        - service: scene.turn_on
+          data_template:
+            transition: !input transition
+            entity_id: >
+              {% set area_scenes = states.scene | selectattr('entity_id', 'in', area_entities(areas[button])) | map(attribute='entity_id') | list %}
+              {% set all_scenes = (area_scenes | reject('in', excluded_scenes[button]) | list) + included_scenes[button] %}
+              {% if use_static_order == true %}
+                {% set is_reset = reset_after > 0 and (as_timestamp(now()) - last_triggered >= reset_after) %}
+                {% if is_reset == true %}
+                  {{ all_scenes[0] }}
+                {% else %}
+                  {% set unknown_scenes = expand(all_scenes) | selectattr('state', 'eq', 'unknown') | map(attribute='entity_id') | list %}
+                  {% set scenes_sorted_by_activation = expand(all_scenes) | sort(attribute='state', reverse = true) | map(attribute='entity_id') | reject('in', unknown_scenes) | list %}
+                  {% set last_activated_scene = scenes_sorted_by_activation[0] %}
+                  {% set index_of_last_activated_scene = all_scenes.index(last_activated_scene) %}
+                  {% set new_index = index_of_last_activated_scene + 1 %}
+                  {% if new_index == all_scenes | count %}
+                    {{ all_scenes[0] }}
+                  {% else %}
+                    {{ all_scenes[new_index] }}
+                  {% endif %}
+                {% endif %}
+              {% else %}     
+                {% set unknown_scenes = expand(all_scenes) | selectattr('state', 'eq', 'unknown') | map(attribute='entity_id') | list %}
+                {% if unknown_scenes | count > 0 %}
+                  {{ unknown_scenes[0] }}     
+                {% else %}
+                  {% set known_scenes = expand(all_scenes) | sort(attribute='state', reverse = false) | map(attribute='entity_id') | list %}
+                  {{ known_scenes[0] }}
+                {% endif %}
+              {% endif %}
     - choose:
-      - conditions: 
+      - conditions:
         - '{{ use_custom and not prevent_on_change }}'
         - '{{ actions_custom[press_type][button] != [] }}'
         sequence:
-          - repeat:
-              for_each: "{{ actions_custom[press_type][button] }}"
-              sequence:
+        - repeat:
+            for_each: '{{ actions_custom[press_type][button] }}'
+            sequence:
+            - choose:
+              - conditions:
+                - '{{ repeat.item.target is defined }}'
+                sequence:
+                - action: '{{ repeat.item.action }}'
+                  data: '{{ repeat.item.data }}'
+                  target: '{{ repeat.item.target }}'
+              - conditions:
+                - '{{ repeat.item.target is not defined }}'
+                sequence:
+                - action: '{{ repeat.item.action }}'
+                  data: '{{ repeat.item.data }}'
+  - conditions:
+    - '{{ action is match(find="^brightness_step") }}'
+    sequence:
+    - variables:
+        step_size: '{{trigger.payload_json.action_step_size}}'
+        step_percentage: '{% if action == "brightness_step_up" %}{{ step_size * dim_scale }} 
+          {% elif action == "brightness_step_down" %}{{ -step_size * dim_scale }}
+          {% endif %}'
+        small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
+        medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
+        step_size_name: ' {% if step_size <= small_rotation_max_button %}{{ "small"}}
+            {% elif step_size <= medium_rotation_max_button %}{{ "medium" }}
+            {% else %}{{ "large" }}
+            {% endif %}'
+    - choose:
+      - conditions:
+        - '{{ lights[last_button] == {} or actions_dim[last_button] == "custom" }}'
+        - '{{ step_size != 255 }}'
+        - '{{ actions_custom[action][step_size_name][last_button] != [] }}'
+        sequence:
+        - repeat:
+            for_each: '{{ actions_custom[action][step_size_name][last_button] }}'
+            sequence:
+            - choose:
+              - conditions:
+                - '{{ repeat.item.target != None }}'
+                sequence:
                 - choose:
-                  - conditions: 
+                  - conditions:
                     - '{{ repeat.item.target is defined }}'
                     sequence:
                     - action: '{{ repeat.item.action }}'
                       data: '{{ repeat.item.data }}'
                       target: '{{ repeat.item.target }}'
-                  - conditions: 
+                  - conditions:
                     - '{{ repeat.item.target is not defined }}'
                     sequence:
                     - action: '{{ repeat.item.action }}'
                       data: '{{ repeat.item.data }}'
-  ### Rotation actions ###
-  - conditions: 
-    - '{{ action is match(find="^brightness_step") }}'
-    sequence:
-    - variables:
-        step_size: '{{trigger.payload_json.action_step_size}}'
-        step_percentage: '
-            {% if action == "brightness_step_up" %}{{ step_size * dim_scale }} 
-            {% elif action == "brightness_step_down" %}{{ -step_size * dim_scale }}
-            {% endif %}'
-        small_rotation_max_button: '{{ small_rotation_max[last_button] }}'
-        medium_rotation_max_button: '{{ medium_rotation_max[last_button] }}'
-        step_size_name: '
-            {% if step_size <= small_rotation_max_button %}{{ "small" }}
-            {% elif step_size <= medium_rotation_max_button %}{{ "medium" }}
-            {% else %}{{ "large" }}
-            {% endif %}'
-    - choose:
-      - conditions: 
-        - '{{ lights[last_button] == {} or actions_dim[last_button] == "custom" }}'
-        - '{{ step_size != 255 }}'
-        - '{{ actions_custom[action][step_size_name][last_button] != [] }}'
-        sequence:
-          - repeat:
-              for_each: "{{ actions_custom[action][step_size_name][last_button] }}"
-              sequence:
-                - choose:
-                  - conditions: 
-                    - '{{ repeat.item.target != None }}'
-                    sequence:
-                    - choose:
-                      - conditions: 
-                        - '{{ repeat.item.target is defined }}'
-                        sequence:
-                        - action: '{{ repeat.item.action }}'
-                          data: '{{ repeat.item.data }}'
-                          target: '{{ repeat.item.target }}'
-                      - conditions: 
-                        - '{{ repeat.item.target is not defined }}'
-                        sequence:
-                        - action: '{{ repeat.item.action }}'
-                          data: '{{ repeat.item.data }}'
-      - conditions: 
+      - conditions:
         - '{{ current_light_helper != none }}'
         - '{{ step_size != 255 }}'
+        - '{{ actions_dim[last_button] != "area" }}'
         sequence:
         - variables:
             dim_entities:
-              entity_id: '
-                {% if actions_dim[last_button] == "scene" and scenes[last_button] != None %}
-                  {{ state_attr(scenes[last_button], "entity_id") | default }} 
+              entity_id: ' {% if actions_dim[last_button] == "scene" 
+                  and scenes[last_button] != None %} 
+                    {{ state_attr(scenes[last_button], "entity_id") | default }}
                 {% else %} {{ lights[last_button]["entity_id"] | default }} 
                 {% endif %}'
         - service: light.turn_on
@@ -1223,3 +1452,15 @@ action:
           data:
             brightness_step_pct: '{{ step_percentage }}'
             transition: 1
+      - conditions:
+        - '{{ current_light_helper != none }}'
+        - '{{ step_size != 255 }}'
+        - '{{ actions_dim[last_button] == "area" and areas[last_button] != None }}'
+        sequence:
+        - service: homeassistant.turn_on
+          target:
+            area_id: '{{ areas[last_button] }}'
+          data:
+            brightness_step_pct: '{{ step_percentage }}'
+            transition: 1
+
